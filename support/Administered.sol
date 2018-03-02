@@ -1,12 +1,11 @@
-pragma solidity 0.4.20;
+pragma solidity ^0.4.20;
 
 import "./Ownable.sol";
 
-contract Administered is Ownable{
+contract Administered is Ownable {
     mapping (address => bool) public admins;
     
-    function administered() public { 
-        owner = msg.sender; 
+    function Administered() public { 
         admins[owner] = true;
     }
     
@@ -19,10 +18,6 @@ contract Administered is Ownable{
     
     function setAdmin (address _admin, bool isAdmin) public onlyAdmin {
         admins[_admin] = isAdmin;
-    }
-    
-    function killCOntract() public onlyOwner {
-        selfdestruct(owner);
     }
     
 }

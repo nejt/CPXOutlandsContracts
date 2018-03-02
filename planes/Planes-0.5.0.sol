@@ -2,8 +2,10 @@ pragma solidity 0.4.20;
 
 import "./Administered.sol";
 
-//only admins can create planes linked to other networks
-//keep it simple - only create and destroy, no other functionality
+/*	@dev Only admins can create planes linked to other networks
+	Keep it simple - only create and destroy, no other functionality
+	Intended for CPXNet
+*/	
 contract CPXPlanes is Administered{
     struct Plane {
         string id;
