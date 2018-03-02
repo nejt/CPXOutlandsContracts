@@ -81,6 +81,8 @@ contract BaseUpgrades is PaysBank, Administered {
 contract BaseMaker is PaysBank, Administered {
     //connection to bases
     CPXBases CB; 
+    //connection to units
+    CPXUnits CU; 
 
     //constants for pricing
     uint256 public creationCost = 1/10 * 1 ether;
@@ -92,10 +94,11 @@ contract BaseMaker is PaysBank, Administered {
     
     /* admin functions */
     
-    //contract admin has to set base contract
-    function setBaseContract(address _c)
+    //contract admin has to set reference contracts
+    function setRefContracts(address _B, address _U)
     external onlyAdmin {
-        CB = CPXBases(_c);
+        CB = CPXBases(_B);
+        CU = CPXUnits(_U);
     }
     
     function setCreationCost(uint256 _cost)
@@ -104,6 +107,17 @@ contract BaseMaker is PaysBank, Administered {
     }
     
     /* player functions */
+    
+    //allows them to create a base on a plane where a unit is present
     function createBase(uint256 _uintID) 
-    public payable {}
+    public payable {
+        //must be sender
+        require(msg.sender == CU.ownerOf(_uintID));
+        //require funding
+        require(msg.value >= creationCost);
+        //Get plane id
+        bytes32 _planeID = CU.planeOf(_uintID);
+        //create the base
+        CB.create(_planeID,msg.sender);
+    }
 }

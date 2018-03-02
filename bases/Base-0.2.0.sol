@@ -84,6 +84,11 @@ contract CPXBases is ERC721Deed, Pausable, PullToBank, ReentrancyGuard, Administ
     require(deeds[_deedId].deleted == 0);
     _;
   }
+  
+  modifier OwnerOrAdmin (uint256 _deedId) {
+    require(admins[msg.sender] || msg.sender == this.ownerOf(_deedId));
+    _;
+  }
 
 
    /* ERC721Metadata */
@@ -132,7 +137,7 @@ contract CPXBases is ERC721Deed, Pausable, PullToBank, ReentrancyGuard, Administ
   * @return owner address currently marked as the owner of the given deed ID
   */
   function planeOf(uint256 _deedId)
-  external view onlyAdmin returns (bytes32 _planeID) {
+  external view OwnerOrAdmin(_deedId) returns (bytes32 _planeID) {
     require(deedPlane[_deedId] != 0);
     _planeID = deedPlane[_deedId];
   }
