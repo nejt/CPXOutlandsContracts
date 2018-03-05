@@ -6,17 +6,26 @@ import "./Distributes.sol";
 import "./ReentrancyGuard.sol";
 import "./ERC721DeedNoBurn.sol";
 import "./ERC721Metadata.sol";
-import "./Administered.sol";
 
-/*
+/* Cosmic Collection Tokens
+  Represents all collectables within CPX
+  Planes, Planets, Bases, Proxies
+  
   Notes on this example implementation:
+  Every Deed has a type (uint16) tied to it - represents its type 
   Thre is a bank that the contract pays all the fees
-  The concept of "appropriation" is introduced: Deeds are permanently up for sale.
-  Whoever is willing to pay more than the last price that was paid for a given deed, can take ownership of that deed.
-  The previous owner is reimbursed with the amount he paid earlier, and additionally receives half of the amount that the price was increased by. The other half goes to the deed's beneficiary address.
+  
+  Creation is handled via "Maker Contracts" based upon type
+  The type mapping provides links to the contracts that hold the basic statistics for the types
+  
+  Every deed can have a price set and it can be for sale or not 
+  A pecent of the sale price (commission) goes to the bank  
+  The previous owner gets the sale price minus the commission 
+  
+  All payements are pull payments
  */
 
-contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Administered {
+contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard {
 
   using SafeMath for uint256;
 
@@ -28,30 +37,43 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
   // When a deed is bought, the ownership of the deed is transferred to the new owner. 
   event LogPurchase(uint256 indexed id, address indexed oldOwner, address indexed newOwner, uint256 price);
 
+
   /* The actual deeds */
 
-  // The data structure of the example deed
-  struct Base {
+  // The data structure of the CosmicItem deed
+  struct CosmicItem {
+    uint16 itype;
     uint256 price;
     uint256 created;
     bool forSale;
-    address[] owners;
   }
 
   // Mapping from _deedId to Base
-  mapping (uint256 => Base) private deeds;
+  mapping (uint256 => CosmicItem) private deeds;
 
   // Needed to make all deeds discoverable. The length of this array also serves as our deed ID.
   uint256[] private deedIds;
 
+  
+  /* Control of Types */
+  
+  struct CosmicType {
+      address maker;
+      address sats;
+      string name;
+  }
+  mapping (uint16 => CosmicType) public typeData;
 
   /* Variables in control of owner */
-  uint8 profitSharePercent = 1;
+  //profit share on sale of Item
+  uint8 commissionPercent = 1;
 
   // The contract owner can change the base URL, in case it becomes necessary. It is needed for Metadata.
   string public url = "https://www.cpx-outlands.com/";
 
-  // ERC-165 Metadata
+
+  /* ERC-165 Metadata */
+  
   bytes4 internal constant INTERFACE_SIGNATURE_ERC165 = // 0x01ffc9a7
       bytes4(keccak256('supportsInterface(bytes4)'));
 
@@ -69,7 +91,12 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
       bytes4(keccak256('deedUri(uint256)'));
 
 
-  function CPXBases() public {}
+    /* Contract Creation */
+
+  function CosmicCollectionTokens() public {
+      //fallback - bank is owner - othwerwise all profits go to 0
+      bank = msg.sender;
+  }
 
   // The contract owner can withdraw funds that were received this way.
   function() public payable {}
@@ -79,12 +106,12 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
 
   function name()
   external pure returns (string) {
-    return "CPXBases";
+    return "CosmicCollectionTokens";
   }
 
   function symbol()
   external pure returns (string) {
-    return "CPXB";
+    return "CPXT";
   }
 
   function supportsInterface(bytes4 _interfaceID)
@@ -95,6 +122,15 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
       || _interfaceID == INTERFACE_SIGNATURE_ERC721Metadata
     );
   }
+  
+  /* modifier */
+  //only the maker contract of the type can create the token
+  modifier onlyMaker(uint16 _type){
+      require(typeData[_type].maker == msg.sender);
+      _;
+  }
+
+    /* Data Views */
 
   /* Enable listing of all deeds (alternative to ERC721Enumerable to avoid having to work with arrays). */
   function ids()
@@ -102,21 +138,56 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
     return deedIds;
   }
   
-  function isDeedForSale(uint256 _deedId) 
-  external view returns (bool) {
-      return deeds[_deedId].forSale;
+  function nextDeedID()
+  external view returns (uint256) {
+    return deedIds.length;
+  }
+  
+  //returns if for sale and price
+  function deedSaleData(uint256 _deedId) 
+  external view returns (uint256, bool) {
+      return (deeds[_deedId].price, deeds[_deedId].forSale);
+  }
+  
+  function typeOf(uint256 _deedId)
+  external view returns(uint16) {
+      return(deeds[_deedId].itype);
   }
 
   function deed(uint256 _deedId)
   external view 
-  returns (uint256 _price, uint256 _created, bool _forSale, address[] _owners) {
+  returns (uint16 _itype, uint256 _price, uint256 _created, bool _forSale) {
+    _itype = deeds[_deedId].itype;
     _price = deeds[_deedId].price;
     _created = deeds[_deedId].created;
     _forSale = deeds[_deedId].forSale;
-    _owners = deeds[_deedId].owners;
   }
   
 
+  /* Creation Functions */
+
+  // Only the admin can create bases
+  // All Admins are "Maker Contracts" based upon types
+  function create(uint16 _type, address _owner)
+  public onlyMaker(_type) {
+    //create
+    uint256 deedId = deedIds.length;
+    //push to array
+    deedIds.push(deedId);
+    //create new token
+    super._mint(_owner, deedId);
+    //create deed
+    deeds[deedId] = CosmicItem({
+      itype: _type,
+      price: 0,
+      created: now,
+      forSale: false
+    });
+    //log
+    LogCreation(deedId, _owner);
+  }
+  
+  
   /* Core features of the example: Purchase and Payment */
 
   // Forces the transfer of the deed to a new owner. This functionality can be paused by the owner.
@@ -125,7 +196,7 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
     //require for sale
     require(deeds[_deedId].forSale);
     // Require the right payment.
-    uint256 oldPrice = priceOf(_deedId);
+    uint256 oldPrice = deeds[_deedId].price;
     uint256 newPrice = msg.value;
     require(newPrice >= oldPrice);
 
@@ -134,9 +205,9 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
     address newOwner = msg.sender;
     require(oldOwner != newOwner);
 
-    // The profit is split between the previous deed owner and the owner in equal parts.
-    //Bank gets a percent of sale price
-    uint256 profitShare = newPrice.mul(profitSharePercent).div(100);
+    // The contract gets a commission of every sale
+    // commission is a percent
+    uint256 profitShare = newPrice.mul(commissionPercent).div(100);
 
     // The owner gets their share.
     asyncSend(bank, profitShare);
@@ -146,64 +217,33 @@ contract CPXBases is ERC721DeedNoBurn, Pausable, PullToBank, ReentrancyGuard, Ad
 
     // Clear any outstanding approvals and transfer the deed.
     clearApprovalAndTransfer(oldOwner, newOwner, _deedId);
-    // push old owner to owners - a history
-    deeds[_deedId].owners.push(oldOwner);
-    
+
     LogPurchase(_deedId, oldOwner, newOwner, newPrice);
   }
-
-  /* Creation Functions */
-
-  // Only the admin can create bases - usually done by a support contract
-  //may be used to create directy for private plane
-  function create(address _owner)
-  public onlyAdmin {
-    //create
-    uint256 deedId = deedIds.length;
-    //push to array
-    deedIds.push(deedId);
-    super._mint(_owner, deedId);
-    //create deed
-    deeds[deedId] = Base({
-      price: 0,
-      created: now,
-      forSale: false,
-      owners: new address[](0)
-    });
-    //log
-    LogCreation(deedId, _owner);
-  }
   
-  /* Base owner functions */
+  /* Token owner functions */
   
-  //owner gets to set for sale
-  function setForSale(uint256 _deedId, bool _forSale) 
-  external onlyOwnerOf(_deedId) {
-      deeds[_deedId].forSale = _forSale;
-  }
-  //owner gets to set price
-  function setPrice(uint256 _deedId, uint256 _price) 
+  //owner gets to set sale data
+  function setSaleData(uint256 _deedId, uint256 _price, bool _forSale) 
   external onlyOwnerOf(_deedId) {
       deeds[_deedId].price = _price;
+      deeds[_deedId].forSale = _forSale;
   }
-  
-  /* Owner Functions */
 
-  function setCost(uint8 _share)
+  /* Contract Owner Functions */
+
+  function setCommission(uint8 _commission)
   public onlyOwner {
-    profitSharePercent = _share;
+    commissionPercent = _commission;
   }
   
   function setUrl(string _url)
   public onlyOwner {
     url = _url;
   }
-
-  /* Other publicly available functions */
-
-  // Returns the last paid price for this deed.
-  function priceOf(uint256 _deedId)
-  public view returns (uint256 _price) {
-    _price = deeds[_deedId].price;
+  
+  function setTypeData(uint16 _i, address _maker, address _stats, string _name) 
+  external onlyOwner {
+    typeData[_i] = CosmicType(_maker,_stats,_name); 
   }
 }

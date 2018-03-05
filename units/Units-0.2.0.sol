@@ -6,7 +6,7 @@ import "./Distributes.sol";
 import "./ReentrancyGuard.sol";
 import "./ERC721Deed.sol";
 import "./ERC721Metadata.sol";
-import "./Base-0.2.0.sol";
+import "./BaseStats-0.1.0.sol";
 import "./Administered.sol";
 
 /*
@@ -56,7 +56,7 @@ contract CPXUnits is ERC721Deed, Pausable, PullToBank, ReentrancyGuard, Administ
   /* Variables in control of owner */
 
   //holds the reference to the base contract
-  CPXBases internal CB;
+  BaseStats internal BStats;
   
   //constants for pricing
   uint[5] public cost = [1/10 * 1 ether, 2/10 * 1 ether, 4/10 * 1 ether, 8/10 * 1 ether, 16/10 * 1 ether];
@@ -196,11 +196,11 @@ contract CPXUnits is ERC721Deed, Pausable, PullToBank, ReentrancyGuard, Administ
   function create(uint256 _unitID)
   public payable {
     //must be the owner of the unit
-    require(msg.sender == CB.ownerOf(_unitID)); 
+    require(msg.sender == BStats.ownerOf(_unitID)); 
     //check payment
     require(msg.value >= cost[0]);
     //get the planeID 
-    bytes32 _planeID = CB.planeOf(_unitID);
+    bytes32 _planeID = BStats.planeOf(_unitID);
     //set unit id
     uint256 deedId = deedIds.length;
     // The bank gets their share.

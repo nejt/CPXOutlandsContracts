@@ -15,9 +15,17 @@ contract Administered is Ownable {
         require(msg.sender == owner || admins[msg.sender]);
         _;
     }
-    
-    function setAdmin (address _admin, bool isAdmin) public onlyAdmin {
-        admins[_admin] = isAdmin;
+}
+
+/*
+// One way to control Admins in functions using this 
+// ------------------------------------------------------------------------
+    // Control Admins
+    // ------------------------------------------------------------------------
+    function setAdmin(address _admin, bool _isAdmin) 
+    public onlyAdmin returns (bool success) {
+        admins[_admin] = _isAdmin;
+        return true;
     }
     
-}
+*/

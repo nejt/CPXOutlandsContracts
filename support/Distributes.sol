@@ -38,6 +38,8 @@ contract PaysBank is Ownable{
     //sets up bank and distributor
     address internal bank;
 
+    event LogWithdraw (address bank, uint256 amount);
+
     function PaysBank() public {}
     
     function setBankContract(address _bank) 
@@ -49,6 +51,7 @@ contract PaysBank is Ownable{
     public onlyOwner {
         //bank contract has to be set
         require(bank != address(0));
+        LogWithdraw(bank,this.balance);
         bank.transfer(this.balance);
     }
 }
