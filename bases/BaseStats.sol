@@ -61,7 +61,8 @@ contract BaseStats is TracksPlaneLocation {
     
     function planeOf(uint256 _baseID)
     external view OwnerOrAdmin(_baseID) returns (uint256 _planeID) {
-      require(deedPlane[_baseID] != 0);
+      //must have a rank
+      require(bases[_baseID].rank != 0);
       _planeID = deedPlane[_baseID];
     }
     

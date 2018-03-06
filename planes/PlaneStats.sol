@@ -5,8 +5,7 @@ import "./Ownable.sol";
 /*  @dev Contract handles the core stats for a private plane
 */
 contract PlaneStats is Ownable{
-    //requires plane maker/admin contract - as lookup to allow functionality
-    address PMC;
+    //requires plane admin contract - to allow functionality
     address PAC;
 
     /* Personal Plane Data */
@@ -16,7 +15,6 @@ contract PlaneStats is Ownable{
         bytes32 name;
         bool pvt;
         bool isClosed;
-        uint256 cooldown;
     }
     //mapping to handle token to data structure 
     mapping (uint256 => PersonalPlane) public personalPlanes;
@@ -24,7 +22,7 @@ contract PlaneStats is Ownable{
     uint256[] private personalIds;
     
     
-    /* Personal Plane Data */
+    /* Network Plane Data */
 
     //basic plane privacy open state
     struct NetworkPlane {
@@ -37,6 +35,10 @@ contract PlaneStats is Ownable{
     uint256[] private networkPlaneIds;
     //network ids
     mapping (uint16 => string) public networkNames;
+    
+    /*cooldown for all */
+    //plane id to cooldown
+    mapping (uint256 => uint256) public cooldown;
     
 
     /* Contract Creation */
@@ -61,13 +63,13 @@ contract PlaneStats is Ownable{
     public view returns(uint256[] _personal, uint256[] _network){
         return(personalIds,networkPlaneIds);
     }
+    
 
     /* Owner Functions */
     
     //set the contract
-    function setRefContract (address _M, address _A)
+    function setRefContract (address _A)
     external onlyOwner {
-        PMC = _M;
         PAC = _A;
     }
     
@@ -79,16 +81,16 @@ contract PlaneStats is Ownable{
     
     //Creation of plane
     function createPersonalPlane (uint256 _deedID, bytes32 _name)
-    external onlyBySupportContract(PMC) {
+    external onlyBySupportContract(PAC) {
         //store deedIds
         personalIds.push(_deedID);
         //create plane - name, not private, not closed, no cooldown wait
-        personalPlanes[_deedID] = PersonalPlane(_name,false,false,0);
+        personalPlanes[_deedID] = PersonalPlane(_name,false,false);
     }
     
     //Creation of plane
     function createNetworkPlane (uint256 _deedID, uint16 _netid, string _address)
-    external onlyBySupportContract(PMC) {
+    external onlyBySupportContract(PAC) {
         //store deedIds
         networkPlaneIds.push(_deedID);
         //create plane - network id and address
@@ -102,7 +104,7 @@ contract PlaneStats is Ownable{
     //set cooldown - based on user choices
     function setCooldown (uint256 _deedID, uint256 _cool)
     external onlyBySupportContract(PAC) {
-      personalPlanes[_deedID].cooldown = _cool;
+      cooldown[_deedID] = _cool;
     }
     
     //set private - based on user choices

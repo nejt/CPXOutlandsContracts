@@ -28,9 +28,7 @@ contract BaseMaker is PaysBank, Administered {
     //fallback
     function () public payable {}
     //creation
-    function BaseMaker() public {
-        bank = msg.sender;
-    }
+    function BaseMaker() public {}
     
     
    /* Events */

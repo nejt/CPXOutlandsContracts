@@ -9,7 +9,7 @@ import "./Administered.sol";
 // CPX tokens are mintable by the owner until the `disableMinting()` function
 // is executed. Tokens can be burnt by sending them to address 0x0
 //
-// Deployed to : 
+// Deployed to : (Ropsten) 0x887684a6b57c53413749cbd17de94a1c7b89d28b
 // Symbol      : CPX
 // Name        : CosmicPower
 // Total supply: mintable
