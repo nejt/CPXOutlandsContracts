@@ -109,21 +109,24 @@ contract PlanePopulator is PaysBank, Administered {
   //request id
   uint256 requestID;
   
-  
+ 
   event LogNewPopulation(uint256 indexed _planeID, uint256 indexed _popID, bool creature);
-  
+  event LogPopulationRoll(uint256 indexed _planeID, uint256 chance, uint256 roll);
+
   
   /*Constants */
-  uint256 creationPrice = 1/8 * 1 finney;
+  uint256 creationPrice = 1/4 * 1 finney;
   
   
   /* contract Creation */
   function PlanePopulator() public {
+      
       bank = 0x1e1a7f243df786d412fd048d7a093826db396ad9;
       PSC = PlaneStats(0x5b4d3d9602a170be47044522b7d59596388d2048);
       CCT = CosmicCollectionTokens(0x08e448a9c19a4806c988e097828fd2efce9cc58a);
-      PPC = PlanePopulations(0x5afd4b9e3b088cdeed863b67e66a9a8c6d6f7b26);
+      PPC = PlanePopulations(0x5b154f927acf6f0caf56d9bd085b0701194394a0);
       PAC = PlaneAdmin(0x9660140527c7232227b6393d548ed88ad2bdd601);
+      
   }
   function () public payable {}
   
@@ -137,10 +140,9 @@ contract PlanePopulator is PaysBank, Administered {
   function currentCost(uint256 _planeID)
   public view returns (uint256 _cost) {
     //find the number of people on the plane
-    uint256 cp = PPC.countOfPeople(_planeID);
     //find the multiplier - for cost and probability
     //doubles for every people count
-    uint256 npm = 2 ** (1 + cp);
+    uint256 npm = 2 ** PPC.countOfPeople(_planeID);
     //determine cost
     _cost = npm * creationPrice;
   }
@@ -200,14 +202,17 @@ contract PlanePopulator is PaysBank, Administered {
   function populatePersonalPlane(uint256 _planeID, bool _creature) 
   public payable {
     //must be a plane and must own it & no cooldown
-    require(CCT.typeOf(_planeID) == 1 && msg.sender == CCT.ownerOf(_planeID) && PSC.cooldown(_planeID) < block.number);
+    require(CCT.typeOf(_planeID) == 1);
+    require(msg.sender == CCT.ownerOf(_planeID));
+    require(PSC.cooldown(_planeID) < block.number);
     //find the number of people on the plane
     uint256 cp = PPC.countOfPeople(_planeID);
     //automatically set cooldown - 360 blocks per people count
-    PAC.setCooldown(_planeID,360 * (cp + 1) * 2);
+    uint256 _cool = block.number + (360 * (cp + 1));
+    PAC.setCooldown(_planeID, _cool);
     //find the multiplier - for cost and probability
     //doubles for every people count
-    uint256 npm = 2 ** (1 + cp);
+    uint256 npm = 2 ** cp;
     //probability of finding a new people - it is cut in half each success
     uint256 pnp = 1;
     if(npm < 10000) {
@@ -215,6 +220,8 @@ contract PlanePopulator is PaysBank, Administered {
     }
     //pseudo random 1 to 10000
     uint random_number = uint(block.blockhash(block.number-1))%10000 + 1;
+    //Log
+    LogPopulationRoll(_planeID,pnp,random_number);
     //if less than what was determined above create request
     //use require so funds are kicked back
     require(random_number <= pnp);
