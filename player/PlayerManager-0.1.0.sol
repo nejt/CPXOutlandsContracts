@@ -11,10 +11,17 @@ contract PlayerManager is PaysBank, Administered {
     /* constants */
     uint256 public playerMoveCost = 0.1 * 1 finney;
     uint256 public playerTypeCost = 0.25 * 1 finney;
+    uint256 private nullPlane = 999999;
     
     /* Contract creation */
-    function PlayerManager() public {}
+    function PlayerManager() public {
+        bank = 0x1e1a7f243df786d412fd048d7a093826db396ad9;
+        PSC = PlayerStats(0x237bfb19ceb5c004a454b378adc37f205be05ae9);
+    }
     function () public payable {}
+    
+    /*events */
+    event LogNewPlayer(address _player);
     
     /*Admin Functions*/
     function setAdmin(address _admin, bool _isAdmin) 
@@ -34,6 +41,17 @@ contract PlayerManager is PaysBank, Administered {
         if(_type !=0) playerTypeCost = _type;
     }
     
+    function setNullPlane(uint256 _null)
+    external onlyAdmin {
+        nullPlane = _null;
+    }
+    
+    // this contract can be killed - it stores no data
+    function killContract() 
+    external onlyOwner {
+        selfdestruct(bank);
+    }
+    
     
     /*internal control of PlayerStats*/ 
     //allow admin movement
@@ -44,23 +62,39 @@ contract PlayerManager is PaysBank, Administered {
         PSC.movePlayer(_toID,_player,_fromID,_i);
     }
     
+    //increase KO
+    function KO(address _player, uint256 _fromIndex)
+    external onlyAdmin {
+        //increase KO 
+        PSC.KO(_player, nullPlane, _fromIndex);
+    }
+    
+    //set cooldown
+    function setCooldown(address _player, uint256 _cool)
+    external onlyAdmin {
+        PSC.setCooldown(_player, _cool);
+    }
+    
+    
     /* External functions for players */
-    function Activate(uint8 _t, uint256 _planeID) 
+    function Activate(uint8 _c, uint256 _planeID, string _text) 
     external {
         //cannot be active
         require(!PSC.isActive(msg.sender));
         //activate
-        PSC.setActive(msg.sender);
+        PSC.Activate(msg.sender, _text);
         //set type
-        PSC.setType(msg.sender,_t);
+        PSC.setClass(msg.sender,_c);
         //set initial location
         PSC.movePlayer(_planeID,msg.sender);
+        //log
+        LogNewPlayer(msg.sender);
     }
     
     function Move(uint256 _toID, uint256 _fromID, uint256 _i) 
     external payable {
-        //must be active
-        require(PSC.isActive(msg.sender));
+        //must be active & check cooldown 
+        require(PSC.isActive(msg.sender) && PSC.getCooldown(msg.sender) < now);
         //must be at the location
         require(PSC.playerAtIndex(_fromID,_i) == msg.sender);
         //now get cost
@@ -69,13 +103,13 @@ contract PlayerManager is PaysBank, Administered {
         PSC.movePlayer(_toID,msg.sender,_fromID,_i);
     }
     
-    function changeType(uint8 _t)
+    function changeClass(uint8 _c)
     external payable{
-        //must be active
-        require(PSC.isActive(msg.sender));
+        //must be active & check cooldown 
+        require(PSC.isActive(msg.sender) && PSC.getCooldown(msg.sender) < now);
         //must pay
         require(msg.value >= playerTypeCost);
         //make change
-        PSC.setType(msg.sender, _t);
+        PSC.setClass(msg.sender, _c);
     }
 }
