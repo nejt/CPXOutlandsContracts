@@ -1,47 +1,62 @@
 pragma solidity ^0.4.18;
 
-import "./Administered.sol";
-
-contract TracksPlaneLocation is Administered {
+contract TracksPlaneLocation {
     /* Handle Locations */
     
     // Mapping from Plane to Item 
-    mapping (uint256 => uint256[]) internal planeDeeds;
+    mapping (uint256 => uint256[]) internal planeItems;
     
     // Mapping from deed ID to plane
-    mapping (uint256 => uint256) internal deedPlane;
+    mapping (uint256 => uint256) internal itemPlane;
     
     function TracksPlaneLocation() public {}
     
     
     /* Information Functions */
-    /**
-    * @dev Gets the owner of the specified deed ID
-    * @param _deedID uint256 ID of the deed to query the owner of
-    * @return owner address currently marked as the owner of the given deed ID
-    */
-    function planeOf(uint256 _deedID)
+    function planeOf(uint256 _itemID)
     external view returns (uint256 _planeID) {
-      require(deedPlane[_deedID] != 0);
-      _planeID = deedPlane[_deedID];
+      _planeID = itemPlane[_itemID];
     }
     
-    function countOfDeedsByPlane(uint256 _planeID)
-    external view returns (uint256) {
-        return(planeDeeds[_planeID].length);
+    function countOfItemsByPlane(uint256 _planeID)
+    external view returns (uint256 _n) {
+        _n = planeItems[_planeID].length;
     }
     
-    function deedsOnPlane(uint256 _planeID)
-    external view onlyAdmin returns (uint256[]) {
-        return(planeDeeds[_planeID]);
+    function itemsOnPlane(uint256 _planeID)
+    external view returns (uint256[] _items) {
+        _items = planeItems[_planeID];
+    }
+    
+    function itemAtIndex (uint256 _planeID, uint256 _i)
+    external view returns (uint256 _item) {
+        _item = planeItems[_planeID][_i];
     }
     
     
     /* working functions  */
     
-    function addDeedToPlane(uint256 _planeID, uint256 _deedID)
+    function addItemToPlane(uint256 _planeID, uint256 _itemID)
     internal {
-        planeDeeds[_planeID].push(_deedID);
-        deedPlane[_deedID] = _planeID;
+        planeItems[_planeID].push(_itemID);
+        itemPlane[_itemID] = _planeID;
+    }
+    
+    function removeFromPlane(uint256 _planeID, uint256 _i, uint256 _itemID)
+    internal {
+        require(planeItems[_planeID][_i] == _itemID);
+        //set last to index
+        uint256 length = planeItems[_planeID].length;
+        planeItems[_planeID][_i] = planeItems[_planeID][length-1];
+        //now delete last
+        planeItems[_planeID].length--;
+    }
+    
+    function moveItem(uint256 _itemID, uint256 _to, uint256 _from, uint256 _fromI) 
+    internal {
+        //first remove 
+        removeFromPlane(_from, _fromI, _itemID);
+        //now add to new plane
+        addItemToPlane(_to, _itemID);
     }
 }

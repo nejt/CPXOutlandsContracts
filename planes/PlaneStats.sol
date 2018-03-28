@@ -5,9 +5,6 @@ import "./Ownable.sol";
 /*  @dev Contract handles the core stats for a private plane
 */
 contract PlaneStats is Ownable{
-    //requires plane admin contract - to allow functionality
-    address PAC;
-
     /* Personal Plane Data */
 
     //basic plane privacy open state
@@ -33,9 +30,7 @@ contract PlaneStats is Ownable{
     mapping (uint256 => NetworkPlane) public networkPlanes;
     // Needed to make all planes discoverable. 
     uint256[] private networkPlaneIds;
-    //network ids
-    mapping (uint16 => string) public networkNames;
-    
+
     /*cooldown for all */
     //plane id to cooldown
     mapping (uint256 => uint256) public cooldown;
@@ -46,13 +41,6 @@ contract PlaneStats is Ownable{
     function PlaneStats () public {}
 
 
-    /* Modifiers */
-    modifier onlyBySupportContract(address _C) {
-        require(msg.sender == _C);
-        _;
-    }
-
-
     /* View Functions */
     function countOfPersonalPlanes() 
     public view returns(uint256) {
@@ -60,28 +48,16 @@ contract PlaneStats is Ownable{
     }
     
     function allPlaneIDs() 
-    public view returns(uint256[] _personal, uint256[] _network){
+    public view returns(uint256[] personal, uint256[] network){
         return(personalIds,networkPlaneIds);
     }
     
 
     /* Owner Functions */
     
-    //set the contract
-    function setRefContract (address _A)
-    external onlyOwner {
-        PAC = _A;
-    }
-    
-    //set network names
-    function setNetworkName(uint16 _netid, string _name)
-    external onlyOwner {
-        networkNames[_netid] = _name;
-    }
-    
     //Creation of plane
     function createPersonalPlane (uint256 _deedID, bytes32 _name)
-    external onlyBySupportContract(PAC) {
+    external onlyOwner {
         //store deedIds
         personalIds.push(_deedID);
         //create plane - name, not private, not closed, no cooldown wait
@@ -90,12 +66,13 @@ contract PlaneStats is Ownable{
     
     //Creation of plane
     function createNetworkPlane (uint256 _deedID, uint16 _netid, string _address)
-    external onlyBySupportContract(PAC) {
+    external onlyOwner {
         //store deedIds
         networkPlaneIds.push(_deedID);
         //create plane - network id and address
         networkPlanes[_deedID] = NetworkPlane(_netid,_address);
     }
+    
     
     /* Individual plane data 
         Set by Maker contract - this contract is purely data
@@ -103,19 +80,19 @@ contract PlaneStats is Ownable{
     
     //set cooldown - based on user choices
     function setCooldown (uint256 _deedID, uint256 _cool)
-    external onlyBySupportContract(PAC) {
+    external onlyOwner {
       cooldown[_deedID] = _cool;
     }
     
     //set private - based on user choices
     function setPrivacy (uint256 _deedID, bool _pvt)
-    external onlyBySupportContract(PAC) {
+    external onlyOwner {
       personalPlanes[_deedID].pvt = _pvt;
     }
     
     //set closed - based on user choices
     function setClosed (uint256 _deedID, bool _isClosed)
-    external onlyBySupportContract(PAC) {
+    external onlyOwner {
       personalPlanes[_deedID].isClosed = _isClosed;
     }
     

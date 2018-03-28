@@ -4,14 +4,14 @@ import "./SafeMath.sol";
 import "./Ownable.sol";
 
 // ----------------------------------------------------------------------------
-// CPX 'Cosmic Power CPX' token contract
+// 'Cosmic Experience Points' token contract
 //
-// CPX tokens are mintable by the owner until the `disableMinting()` function
+// CXP tokens are mintable by the owner until the `disableMinting()` function
 // is executed. Tokens can be burnt by sending them to address 0x0
 //
 // Deployed to : (Ropsten) 
-// Symbol      : CPX
-// Name        : Cosmic Power
+// Symbol      : CXP
+// Name        : Cosmic Experience Points
 // Total supply: mintable
 // Decimals    : 0
 //
@@ -50,7 +50,7 @@ contract ApproveAndCallFallBack {
 // ERC20 Token, with the addition of symbol, name and decimals and assisted
 // token transfers
 // ----------------------------------------------------------------------------
-contract CosmicPowerToken is ERC20Interface, Ownable {
+contract CosmicExperiencePoints is ERC20Interface, Ownable {
     using SafeMath for uint;
 
     string public symbol;
@@ -68,9 +68,9 @@ contract CosmicPowerToken is ERC20Interface, Ownable {
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
-    function CosmicPowerToken() public {
-        symbol = "CPX";
-        name = "Cosmic Power";
+    function CosmicExperiencePoints() public {
+        symbol = "CXP";
+        name = "Cosmic Experience Points";
         decimals = 0;
         mintable = true;
     }

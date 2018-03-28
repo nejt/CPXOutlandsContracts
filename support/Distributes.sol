@@ -1,4 +1,4 @@
-pragma solidity 0.4.20;
+pragma solidity ^0.4.20;
 
 import './Ownable.sol';
 import './PullPayment.sol';
@@ -37,10 +37,13 @@ contract PullToBank is Ownable, PullPayment {
 contract PaysBank is Ownable{
     //sets up bank and distributor
     address internal bank;
+    
+    event LogWithdraw(uint256 block, address who);
 
-    event LogWithdraw (address bank, uint256 amount);
-
-    function PaysBank() public {}
+    function PaysBank() public {
+        //make sure money can be recovered
+        bank = msg.sender;
+    }
     
     function setBankContract(address _bank) 
     public onlyOwner {
@@ -51,8 +54,8 @@ contract PaysBank is Ownable{
     public onlyOwner {
         //bank contract has to be set
         require(bank != address(0));
-        LogWithdraw(bank,this.balance);
         bank.transfer(this.balance);
+        LogWithdraw(block.number,msg.sender);
     }
 }
 
