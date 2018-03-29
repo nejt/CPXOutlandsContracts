@@ -73,6 +73,25 @@
 				"type": "uint256"
 			}
 		],
+		"name": "getCanTrain",
+		"outputs": [
+			{
+				"name": "canTrain",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_hero",
+				"type": "uint256"
+			}
+		],
 		"name": "getCooldown",
 		"outputs": [
 			{
@@ -101,32 +120,6 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_hero",
-				"type": "uint256"
-			},
-			{
-				"name": "_meta",
-				"type": "bytes32"
-			},
-			{
-				"name": "_lineage",
-				"type": "uint256"
-			},
-			{
-				"name": "_planeID",
-				"type": "uint256"
-			}
-		],
-		"name": "createHero",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -188,6 +181,32 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_meta",
+				"type": "bytes32"
+			},
+			{
+				"name": "_lineage",
+				"type": "uint256"
+			},
+			{
+				"name": "_planeID",
+				"type": "uint256"
+			}
+		],
+		"name": "trainNewHero",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -265,6 +284,14 @@
 				"type": "uint256"
 			},
 			{
+				"name": "XP",
+				"type": "uint256"
+			},
+			{
+				"name": "canTrain",
+				"type": "bool"
+			},
+			{
 				"name": "nKO",
 				"type": "uint256"
 			},
@@ -326,6 +353,61 @@
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_canTrain",
+				"type": "bool"
+			}
+		],
+		"name": "setCanTrain",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_XP",
+				"type": "uint256"
+			}
+		],
+		"name": "giveXP",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_hero",
+				"type": "uint256"
+			}
+		],
+		"name": "getXP",
+		"outputs": [
+			{
+				"name": "XP",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{

@@ -59,6 +59,18 @@ contract HeroAdmin is Administered, OwningContract, PaysBank {
         //set to cool
         HeroStats(_stats).setCooldown(_hero, _cool);
     }
+    //set canTrain
+    function setCanTrain(address _stats, uint256 _hero, bool _canTrain) 
+    external onlyAdmin {
+        //set to cool
+        HeroStats(_stats).setCanTrain(_hero, _canTrain);
+    }
+    //give XP to hero
+    function giveXP(address _stats, uint256 _hero, uint256 _XP) 
+    external onlyAdmin {
+        //give XP to hero
+        HeroStats(_stats).giveXP(_hero, _XP);
+    }
     
     
     /* View Functions */
@@ -86,6 +98,30 @@ contract HeroAdmin is Administered, OwningContract, PaysBank {
         HeroStats(_stats).createHero(_id, meta, _planeID);
         //Log
         emit HeroCreated(msg.sender, _id, meta);
+    }
+    
+    //train a hero - creates a lineage of heroes
+    function trainNewHero (address _token, address _stats, uint256 _lineage) 
+    public payable returns (uint256 id) {
+        //require can train
+        require(HeroStats(_stats).getCanTrain(_lineage));
+        //require cooldown
+        require(HeroStats(_stats).getCooldown(_lineage) < now);
+        //current cost
+        uint256 _cost = getCurrentCost(_stats);
+        //require payment
+        require(msg.value >= _cost);
+        uint256 _planeID = HeroStats(_stats).planeOf(_lineage);
+        //create meta
+        bytes32 meta = keccak256(_cost,msg.sender,_planeID,_lineage);
+        //create the token
+        id = CosmicCollectionTokens(_token).nextDeedID();
+        //type 2 is hero
+        CosmicCollectionTokens(_token).create(2, msg.sender);
+        //trainNewHero(uint256 _hero, bytes32 _meta, uint256 _lineage, uint256 _planeID)
+        HeroStats(_stats).trainNewHero(id, meta, _lineage, _planeID);
+        //Log
+        emit HeroCreated(msg.sender, id, meta);
     }
     
     function moveHero (address _token, address _stats, uint256 _hero, uint256 _planeID, uint256 _fromI)

@@ -9,6 +9,8 @@ contract HeroStats is Ownable, TracksPlaneLocation {
         bytes32 meta;
         uint256 lineage;
         uint256 gen;
+        uint256 XP;
+        bool canTrain;
         uint256 nKO;
         uint256 cooldown;
     }
@@ -47,6 +49,16 @@ contract HeroStats is Ownable, TracksPlaneLocation {
     external view returns (bytes32 meta) {
         meta = CPXHeroes[_hero].meta;
     }
+    //easy XP reference
+    function getXP(uint256 _hero)
+    external view returns (uint256 XP) {
+        XP = CPXHeroes[_hero].XP;
+    }
+    //easy canTrain reference
+    function getCanTrain(uint256 _hero)
+    external view returns (bool canTrain) {
+        canTrain = CPXHeroes[_hero].canTrain;
+    }
     //easy cooldown reference
     function getCooldown(uint256 _hero)
     external view returns (uint256 cool) {
@@ -68,14 +80,22 @@ contract HeroStats is Ownable, TracksPlaneLocation {
         allHeroes.push(_hero);
         //determine cooldown - always 2 hrs from creation
         uint256 cool = now + 2 * 1 hours;
-        //create player
-        CPXHeroes[_hero] = Hero(_meta, 0, 0, 0, cool);
+        //create player - meta, lineage, gen, XP, NKO, cooldown
+        CPXHeroes[_hero] = Hero({
+            meta : _meta,
+            lineage : 0,
+            gen : 0, 
+            XP : 0, 
+            canTrain : false,
+            nKO : 0,
+            cooldown : cool
+        });
         //set them on their plane
         addItemToPlane(_planeID, _hero);
     }
     
     //create a new hero from a lineage - set meta
-    function createHero(uint256 _hero, bytes32 _meta, uint256 _lineage, uint256 _planeID) 
+    function trainNewHero(uint256 _hero, bytes32 _meta, uint256 _lineage, uint256 _planeID) 
     external onlyOwner {
         //add to list
         allHeroes.push(_hero);
@@ -86,8 +106,16 @@ contract HeroStats is Ownable, TracksPlaneLocation {
         uint256 cool = now + 2 * 1 hours;
         //lineage getts cooldown too
         CPXHeroes[_lineage].cooldown = cool;
-        //create player
-        CPXHeroes[_hero] = Hero(_meta, _lineage, _gen, 0, cool);
+        //create player - meta, lineage, gen, XP, NKO, cooldown
+        CPXHeroes[_hero] = Hero({
+            meta : _meta,
+            lineage : _lineage,
+            gen : _gen, 
+            XP : 0, 
+            canTrain : false,
+            nKO : 0,
+            cooldown : cool
+        });
         //set them on their plane
         addItemToPlane(_planeID, _hero);
     }
@@ -102,6 +130,19 @@ contract HeroStats is Ownable, TracksPlaneLocation {
         CPXHeroes[_hero].cooldown = _cool;
         //move hero to null plane
         moveItem(_hero, _nullP, itemPlane[_hero], _i);
+    }
+    
+    //set XP
+    function giveXP(uint256 _hero, uint256 _XP) 
+    external onlyOwner {
+        //set XP
+        CPXHeroes[_hero].XP += _XP;
+    }
+    
+    //set canTrain
+    function setCanTrain(uint256 _hero, bool _canTrain) 
+    external onlyOwner {
+        CPXHeroes[_hero].canTrain = _canTrain;
     }
     
     //set cooldown
