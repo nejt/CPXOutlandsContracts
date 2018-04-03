@@ -44,28 +44,6 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_hero",
-				"type": "uint256"
-			},
-			{
-				"name": "_meta",
-				"type": "bytes32"
-			},
-			{
-				"name": "_planeID",
-				"type": "uint256"
-			}
-		],
-		"name": "createHero",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -126,25 +104,6 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_hero",
-				"type": "uint256"
-			}
-		],
-		"name": "getMeta",
-		"outputs": [
-			{
-				"name": "meta",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
 				"name": "_planeID",
 				"type": "uint256"
 			}
@@ -184,32 +143,6 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_hero",
-				"type": "uint256"
-			},
-			{
-				"name": "_meta",
-				"type": "bytes32"
-			},
-			{
-				"name": "_lineage",
-				"type": "uint256"
-			},
-			{
-				"name": "_planeID",
-				"type": "uint256"
-			}
-		],
-		"name": "trainNewHero",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -229,17 +162,25 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "countOfHeroes",
-		"outputs": [
+		"constant": false,
+		"inputs": [
 			{
-				"name": "_count",
+				"name": "_hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_lineage",
+				"type": "uint256"
+			},
+			{
+				"name": "_planeID",
 				"type": "uint256"
 			}
 		],
+		"name": "trainNewHero",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -272,15 +213,7 @@
 		"name": "CPXHeroes",
 		"outputs": [
 			{
-				"name": "meta",
-				"type": "bytes32"
-			},
-			{
 				"name": "lineage",
-				"type": "uint256"
-			},
-			{
-				"name": "gen",
 				"type": "uint256"
 			},
 			{
@@ -392,6 +325,24 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_planeID",
+				"type": "uint256"
+			}
+		],
+		"name": "createHero",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -422,20 +373,6 @@
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "allHeroTokens",
-		"outputs": [
-			{
-				"name": "list",
-				"type": "uint256[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{

@@ -32,7 +32,7 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   /* Events */
 
   // When a deed is created.
-  event LogCreation(uint256 indexed id, address owner);
+  event LogCreation(uint256 indexed id, uint16 indexed cosmicType, address owner);
 
   // When a deed is bought, the ownership of the deed is transferred to the new owner. 
   event LogPurchase(uint256 indexed id, address indexed oldOwner, address indexed newOwner, uint256 price);
@@ -42,7 +42,7 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
 
   // The data structure of the CosmicItem deed
   struct CosmicItem {
-    uint16 itype;
+    uint16 cosmicType;
     uint256 price;
     uint256 created;
     bool forSale;
@@ -50,6 +50,8 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
 
   // Mapping from _deedId to Base
   mapping (uint256 => CosmicItem) private deeds;
+  //mapping to track all deeds of a specific type
+  mapping (uint16 => uint256[]) private deedsOfType;
 
   // Needed to make all deeds discoverable. The length of this array also serves as our deed ID.
   uint256[] private deedIds;
@@ -151,13 +153,32 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   
   function typeOf(uint256 _deedId)
   external view returns(uint16) {
-      return(deeds[_deedId].itype);
+      return(deeds[_deedId].cosmicType);
+  }
+  
+  //get a list of all deeds of a type
+  function allDeedsOfType (uint16 _type)
+  external view returns(uint256[] allDeeds) {
+      allDeeds = deedsOfType[_type];
+  }
+  
+  //get a count of all deeds of a type
+  function countOfDeedsOfType (uint16 _type)
+  external view returns(uint256 count) {
+      count = deedsOfType[_type].length;
+  }
+  
+  //hash standard - use the token contract, type id, time created, and id
+  function getHash (uint256 _deedId)
+  external view returns(bytes32 hash) {
+      uint16 _type = deeds[_deedId].cosmicType;
+      hash = keccak256(address(this), _type, deeds[_deedId].created, _deedId);
   }
 
   function deed(uint256 _deedId)
   external view 
   returns (uint16 _itype, uint256 _price, uint256 _created, bool _forSale) {
-    _itype = deeds[_deedId].itype;
+    _itype = deeds[_deedId].cosmicType;
     _price = deeds[_deedId].price;
     _created = deeds[_deedId].created;
     _forSale = deeds[_deedId].forSale;
@@ -178,13 +199,15 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
     super._mint(_owner, deedId);
     //create deed
     deeds[deedId] = CosmicItem({
-      itype: _type,
+      cosmicType: _type,
       price: 0,
       created: now,
       forSale: false
     });
+    //track the type of the deed
+    deedsOfType[_type].push(deedId);
     //log
-    LogCreation(deedId, _owner);
+    emit LogCreation(deedId, _type, _owner);
   }
   
   

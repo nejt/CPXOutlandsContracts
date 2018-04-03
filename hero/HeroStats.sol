@@ -6,9 +6,7 @@ import "./TracksPlaneLocation.sol";
 contract HeroStats is Ownable, TracksPlaneLocation {
     /* Activity and core stats*/
     struct Hero {
-        bytes32 meta;
         uint256 lineage;
-        uint256 gen;
         uint256 XP;
         bool canTrain;
         uint256 nKO;
@@ -16,8 +14,6 @@ contract HeroStats is Ownable, TracksPlaneLocation {
     }
     //map token id to the struct - for public view
     mapping (uint256 => Hero) public CPXHeroes;
-    //list all heroes
-    uint256[] private allHeroes;
 
 
     /*contract creation*/
@@ -27,43 +23,30 @@ contract HeroStats is Ownable, TracksPlaneLocation {
     /* Information Functions 
         Many are admin only because player location is sensitive
     */
-    //count of heroes
-    function countOfHeroes() 
-    external view returns (uint256 _count){
-        _count = allHeroes.length;
-    }
-    
-    //all hero token ids
-    function allHeroTokens () 
-    external view returns (uint256[] list){
-        list = allHeroes;
-    }
-
     //Checks whether it has been created    
     function isActive(uint256 _hero)
     public view returns (bool active) {
-        active = CPXHeroes[_hero].meta != bytes32(0) ? true : false;
+        active = CPXHeroes[_hero].XP > 0;
     }
-    //easy meta reference
-    function getMeta(uint256 _hero)
-    external view returns (bytes32 meta) {
-        meta = CPXHeroes[_hero].meta;
-    }
+    
     //easy XP reference
     function getXP(uint256 _hero)
     external view returns (uint256 XP) {
         XP = CPXHeroes[_hero].XP;
     }
+    
     //easy canTrain reference
     function getCanTrain(uint256 _hero)
     external view returns (bool canTrain) {
         canTrain = CPXHeroes[_hero].canTrain;
     }
+    
     //easy cooldown reference
     function getCooldown(uint256 _hero)
     external view returns (uint256 cool) {
         cool = CPXHeroes[_hero].cooldown;
     }
+    
     //easy nKO ref
     function getKO(uint256 _hero)
     external view returns (uint256 nKO) {
@@ -74,18 +57,14 @@ contract HeroStats is Ownable, TracksPlaneLocation {
     /*External By Owner Admin Contract*/
     
     //create a new hero - set meta
-    function createHero(uint256 _hero, bytes32 _meta, uint256 _planeID) 
-    external onlyOwner {
-        //add to list
-        allHeroes.push(_hero);
+    function createHero(uint256 _hero, uint256 _planeID) 
+    public onlyOwner {
         //determine cooldown - always 2 hrs from creation
         uint256 cool = now + 2 * 1 hours;
-        //create player - meta, lineage, gen, XP, NKO, cooldown
+        //create player - lineage, XP,canTrain, NKO, cooldown
         CPXHeroes[_hero] = Hero({
-            meta : _meta,
             lineage : 0,
-            gen : 0, 
-            XP : 0, 
+            XP : 1, 
             canTrain : false,
             nKO : 0,
             cooldown : cool
@@ -95,29 +74,16 @@ contract HeroStats is Ownable, TracksPlaneLocation {
     }
     
     //create a new hero from a lineage - set meta
-    function trainNewHero(uint256 _hero, bytes32 _meta, uint256 _lineage, uint256 _planeID) 
+    function trainNewHero(uint256 _hero, uint256 _lineage, uint256 _planeID) 
     external onlyOwner {
-        //add to list
-        allHeroes.push(_hero);
-        //get lineage generation
-        uint256 _gen = CPXHeroes[_lineage].gen;
-        _gen++;
         //determine cooldown - always 2 hrs from creation
         uint256 cool = now + 2 * 1 hours;
         //lineage getts cooldown too
         CPXHeroes[_lineage].cooldown = cool;
-        //create player - meta, lineage, gen, XP, NKO, cooldown
-        CPXHeroes[_hero] = Hero({
-            meta : _meta,
-            lineage : _lineage,
-            gen : _gen, 
-            XP : 0, 
-            canTrain : false,
-            nKO : 0,
-            cooldown : cool
-        });
-        //set them on their plane
-        addItemToPlane(_planeID, _hero);
+        //create hero
+        createHero(_hero, _planeID);
+        //set lineage
+        CPXHeroes[_hero].lineage = _lineage;
     }
     
     //increase KO

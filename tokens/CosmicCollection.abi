@@ -282,6 +282,25 @@
 	},
 	{
 		"constant": true,
+		"inputs": [
+			{
+				"name": "_deedId",
+				"type": "uint256"
+			}
+		],
+		"name": "getHash",
+		"outputs": [
+			{
+				"name": "hash",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [],
 		"name": "nextDeedID",
 		"outputs": [
@@ -361,6 +380,25 @@
 			{
 				"name": "",
 				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_type",
+				"type": "uint16"
+			}
+		],
+		"name": "allDeedsOfType",
+		"outputs": [
+			{
+				"name": "allDeeds",
+				"type": "uint256[]"
 			}
 		],
 		"payable": false,
@@ -474,6 +512,25 @@
 		"outputs": [],
 		"payable": true,
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_type",
+				"type": "uint16"
+			}
+		],
+		"name": "countOfDeedsOfType",
+		"outputs": [
+			{
+				"name": "count",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -602,6 +659,11 @@
 				"indexed": true,
 				"name": "id",
 				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "cosmicType",
+				"type": "uint16"
 			},
 			{
 				"indexed": false,

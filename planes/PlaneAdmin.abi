@@ -25,7 +25,7 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_stats",
+				"name": "_token",
 				"type": "address"
 			}
 		],
@@ -38,42 +38,6 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "closedPlane",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_stats",
-				"type": "address"
-			},
-			{
-				"name": "_name",
-				"type": "string"
-			}
-		],
-		"name": "createPersonalPlane",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -92,6 +56,32 @@
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"name": "_stats",
+				"type": "address"
+			},
+			{
+				"name": "_planeID",
+				"type": "uint256"
+			},
+			{
+				"name": "climate",
+				"type": "uint8"
+			}
+		],
+		"name": "setClimate",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -156,21 +146,9 @@
 			{
 				"name": "_token",
 				"type": "address"
-			},
-			{
-				"name": "_stats",
-				"type": "address"
-			},
-			{
-				"name": "_planeID",
-				"type": "uint256"
-			},
-			{
-				"name": "_isClosed",
-				"type": "bool"
 			}
 		],
-		"name": "setClosed",
+		"name": "createPlane",
 		"outputs": [],
 		"payable": true,
 		"stateMutability": "payable",
@@ -236,32 +214,6 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"name": "_stats",
-				"type": "address"
-			},
-			{
-				"name": "_planeID",
-				"type": "uint256"
-			},
-			{
-				"name": "_pvt",
-				"type": "bool"
-			}
-		],
-		"name": "setPrivate",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [],
 		"name": "owner",
@@ -279,32 +231,40 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_cost",
-				"type": "uint256[3]"
+				"name": "_token",
+				"type": "address"
 			},
 			{
-				"name": "_step",
+				"name": "_stats",
+				"type": "address"
+			},
+			{
+				"name": "_planeID",
 				"type": "uint256"
+			},
+			{
+				"name": "terrain",
+				"type": "uint8"
 			}
 		],
-		"name": "setConstants",
+		"name": "setTerrain",
 		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "privatePlane",
-		"outputs": [
+		"constant": false,
+		"inputs": [
 			{
-				"name": "",
-				"type": "uint256"
+				"name": "_bank",
+				"type": "address"
 			}
 		],
+		"name": "setBankContract",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -319,29 +279,29 @@
 				"type": "address"
 			},
 			{
-				"name": "_netid",
-				"type": "uint16"
+				"name": "_planeID",
+				"type": "uint256"
 			},
 			{
-				"name": "_address",
-				"type": "string"
+				"name": "powerMultiplier",
+				"type": "uint8"
 			}
 		],
-		"name": "createNetworkPlane",
+		"name": "setPowerMultiplier",
 		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_bank",
-				"type": "address"
+				"name": "_cost",
+				"type": "uint256[3]"
 			}
 		],
-		"name": "setBankContract",
+		"name": "setConstants",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -384,41 +344,9 @@
 				"indexed": false,
 				"name": "id",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "name",
-				"type": "bytes32"
 			}
 		],
-		"name": "LogNewPersonalPlane",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "_creator",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": true,
-				"name": "_netid",
-				"type": "uint16"
-			},
-			{
-				"indexed": false,
-				"name": "paddress",
-				"type": "string"
-			}
-		],
-		"name": "LogNewNetworkPlane",
+		"name": "LogNewPlane",
 		"type": "event"
 	},
 	{

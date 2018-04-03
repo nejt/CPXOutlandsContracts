@@ -8,26 +8,29 @@ import "./HeroStats.sol";
 
 contract HeroAdmin is Administered, OwningContract, PaysBank {
     
-    uint256 internal creationCost = 1 finney;
+    uint256 internal creationCost = 2 finney;
     //step percentage for cost increase
     uint256 internal creationStep = 1;
     //cost for movement
     uint256 public moveCost = 0.2 * 1 finney;
+    //threshold for allowing to train
+    uint256 public trainingThreshold = 160000;
     
     function () payable public {}
     function HeroAdmin () public {}
     
     
     /*Events */
-    event HeroCreated (address indexed owner, uint256 id, bytes32 meta);
+    event HeroCreated (address indexed owner, uint256 id);
     event HeroKOed (uint256 indexed _id);
     
     /* Admin functions */
-    function setConstants(uint256[3] _c)
+    function setConstants(uint256[4] _c)
     external onlyAdmin {
         if(_c[0] != 0) creationCost = _c[0];
         if(_c[1] != 0) creationStep = _c[1];
         if(_c[2] != 0) moveCost = _c[2];
+        if(_c[3] != 0) trainingThreshold = _c[3];
     }
     // this contract can be killed - it stores no data
     function killContract(address _stats, address _newOwner) 
@@ -70,13 +73,17 @@ contract HeroAdmin is Administered, OwningContract, PaysBank {
     external onlyAdmin {
         //give XP to hero
         HeroStats(_stats).giveXP(_hero, _XP);
+        //check XP - if above threshold - allow training
+        uint256 TXP = HeroStats(_stats).getXP(_hero);
+        if(TXP > trainingThreshold) HeroStats(_stats).setCanTrain(_hero, true);
     }
     
     
     /* View Functions */
-    function getCurrentCost (address _stats) 
+    function getCurrentCost (address _token) 
     public view returns(uint256 cost) {
-        uint256 n = HeroStats(_stats).countOfHeroes();
+        //heroes are type 1
+        uint256 n = CosmicCollectionTokens(_token).countOfDeedsOfType(1);
         cost = creationCost * (100 + (creationStep * n)) / 100;
     }
     
@@ -85,19 +92,17 @@ contract HeroAdmin is Administered, OwningContract, PaysBank {
     
     function createHero (address _token, address _stats, uint256 _planeID) 
     public payable returns (uint256 _id) {
-        uint256 _cost = getCurrentCost(_stats);
+        uint256 _cost = getCurrentCost(_token);
         //require payment
         require(msg.value >= _cost);
-        //create meta
-        bytes32 meta = keccak256(_cost,msg.sender,_planeID);
         //create the token
         _id = CosmicCollectionTokens(_token).nextDeedID();
-        //type 2 is hero
-        CosmicCollectionTokens(_token).create(2, msg.sender);
+        //type 1 is hero
+        CosmicCollectionTokens(_token).create(1, msg.sender);
         //createHero(uint256 _hero, bytes32 _meta, uint256 _planeID) 
-        HeroStats(_stats).createHero(_id, meta, _planeID);
+        HeroStats(_stats).createHero(_id, _planeID);
         //Log
-        emit HeroCreated(msg.sender, _id, meta);
+        emit HeroCreated(msg.sender, _id);
     }
     
     //train a hero - creates a lineage of heroes
@@ -108,20 +113,18 @@ contract HeroAdmin is Administered, OwningContract, PaysBank {
         //require cooldown
         require(HeroStats(_stats).getCooldown(_lineage) < now);
         //current cost
-        uint256 _cost = getCurrentCost(_stats);
+        uint256 _cost = getCurrentCost(_token);
         //require payment
         require(msg.value >= _cost);
         uint256 _planeID = HeroStats(_stats).planeOf(_lineage);
-        //create meta
-        bytes32 meta = keccak256(_cost,msg.sender,_planeID,_lineage);
         //create the token
         id = CosmicCollectionTokens(_token).nextDeedID();
-        //type 2 is hero
-        CosmicCollectionTokens(_token).create(2, msg.sender);
-        //trainNewHero(uint256 _hero, bytes32 _meta, uint256 _lineage, uint256 _planeID)
-        HeroStats(_stats).trainNewHero(id, meta, _lineage, _planeID);
+        //type 1 is hero
+        CosmicCollectionTokens(_token).create(1, msg.sender);
+        //trainNewHero(uint256 _hero, uint256 _lineage, uint256 _planeID)
+        HeroStats(_stats).trainNewHero(id, _lineage, _planeID);
         //Log
-        emit HeroCreated(msg.sender, id, meta);
+        emit HeroCreated(msg.sender, id);
     }
     
     function moveHero (address _token, address _stats, uint256 _hero, uint256 _planeID, uint256 _fromI)
@@ -135,4 +138,5 @@ contract HeroAdmin is Administered, OwningContract, PaysBank {
         //moveHero(uint256 _hero, uint256 _to, uint256 _i)
         HeroStats(_stats).moveHero(_hero, _planeID, _fromI);
     }
+    
 }

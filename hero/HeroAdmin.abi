@@ -25,7 +25,7 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_stats",
+				"name": "_token",
 				"type": "address"
 			}
 		],
@@ -87,6 +87,20 @@
 		"type": "function"
 	},
 	{
+		"constant": true,
+		"inputs": [],
+		"name": "trainingThreshold",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -129,6 +143,20 @@
 		],
 		"payable": true,
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_c",
+				"type": "uint256[4]"
+			}
+		],
+		"name": "setConstants",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -304,20 +332,6 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_c",
-				"type": "uint256[3]"
-			}
-		],
-		"name": "setConstants",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "newOwner",
 				"type": "address"
 			}
@@ -351,11 +365,6 @@
 				"indexed": false,
 				"name": "id",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "meta",
-				"type": "bytes32"
 			}
 		],
 		"name": "HeroCreated",
