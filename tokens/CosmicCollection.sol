@@ -56,17 +56,11 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   // Needed to make all deeds discoverable. The length of this array also serves as our deed ID.
   uint256[] private deedIds;
 
-  
-  /* Control of Types */
-  
-  struct CosmicType {
-      address maker;
-      address sats;
-      string name;
-  }
-  mapping (uint16 => CosmicType) public typeData;
 
   /* Variables in control of owner */
+  //maker contract - one contract makes all the tokens
+  address[] public Maker;
+  
   //profit share on sale of Item
   uint8 commissionPercent = 1;
 
@@ -124,13 +118,7 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
       || _interfaceID == INTERFACE_SIGNATURE_ERC721Metadata
     );
   }
-  
-  /* modifier */
-  //only the maker contract of the type can create the token
-  modifier onlyMaker(uint16 _type){
-      require(typeData[_type].maker == msg.sender);
-      _;
-  }
+
 
     /* Data Views */
 
@@ -190,7 +178,8 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   // Only the admin can create bases
   // All Admins are "Maker Contracts" based upon types
   function create(uint16 _type, address _owner)
-  public onlyMaker(_type) {
+  public {
+    require(msg.sender == Maker[_type]);
     //create
     uint256 deedId = deedIds.length;
     //push to array
@@ -265,8 +254,14 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
     url = _url;
   }
   
-  function setTypeData(uint16 _i, address _maker, address _stats, string _name) 
+  function setMaker(address _maker) 
   external onlyOwner {
-    typeData[_i] = CosmicType(_maker,_stats,_name); 
+    Maker.push(_maker);
+  }
+  
+  function setMaker(uint256 i, address _maker) 
+  external onlyOwner {
+      require(Maker[i] != address(0));
+    Maker[i] = _maker;
   }
 }

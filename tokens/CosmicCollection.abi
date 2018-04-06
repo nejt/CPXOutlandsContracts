@@ -284,6 +284,25 @@
 		"constant": true,
 		"inputs": [
 			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "Maker",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
 				"name": "_deedId",
 				"type": "uint256"
 			}
@@ -297,6 +316,24 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "i",
+				"type": "uint256"
+			},
+			{
+				"name": "_maker",
+				"type": "address"
+			}
+		],
+		"name": "setMaker",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -329,33 +366,6 @@
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint16"
-			}
-		],
-		"name": "typeData",
-		"outputs": [
-			{
-				"name": "maker",
-				"type": "address"
-			},
-			{
-				"name": "sats",
-				"type": "address"
-			},
-			{
-				"name": "name",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -460,32 +470,6 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_i",
-				"type": "uint16"
-			},
-			{
-				"name": "_maker",
-				"type": "address"
-			},
-			{
-				"name": "_stats",
-				"type": "address"
-			},
-			{
-				"name": "_name",
-				"type": "string"
-			}
-		],
-		"name": "setTypeData",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "_to",
 				"type": "address"
 			},
@@ -512,6 +496,20 @@
 		"outputs": [],
 		"payable": true,
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_maker",
+				"type": "address"
+			}
+		],
+		"name": "setMaker",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
