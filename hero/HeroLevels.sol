@@ -1,12 +1,17 @@
 pragma solidity ^0.4.18;
 
 import "./CosmicCollection.sol";
+import "./ContractLinked.sol";
 
-contract Stats {
-    function getXP(uint256 _hero) external view returns (uint256 XP);
+contract XPRegistry {
+    mapping (uint256 => uint256) public XP;
 }
 
-contract HeroLevels {
+contract HeroLevels is ContractLinked{
+    /* Links
+      0 - Token, 2 - XPRegistry
+    */
+    
     //constant for rarity of the level hash calculation
     uint256[31] internal levelRarity = [
       0, 
@@ -43,10 +48,10 @@ contract HeroLevels {
     ];
     uint256[21] public XPRequired = [0, 3000, 7500, 14000, 23000, 35000, 53000, 77000, 115000, 160000, 235000, 330000, 475000, 665000, 955000, 1350000, 1900000, 2700000, 3850000, 5350000, 10000000];
     
-    function baseLevel(address token, uint256 hero)
+    function baseLevel(uint256 hero)
     public view returns(uint8) {
         //first get hash
-        bytes32 hash = CosmicCollectionTokens(token).getHash(hero);
+        bytes32 hash = CosmicCollectionTokens(CLinks[0]).getHash(hero);
         
         //convert first 4 of hash into number
         uint x = 0;
@@ -66,7 +71,7 @@ contract HeroLevels {
         }
     }
     
-    function getLevel(uint256 XP) 
+    function getLevelFromXP (uint256 XP) 
     public view returns(uint8) {
         for(uint8 i = 0; i < 20; i++) {
             //if it is less than the value - return the index
@@ -74,12 +79,12 @@ contract HeroLevels {
         }
     }
     
-    function getLevel(address token, address stats, uint256 hero) 
+    function getLevel(uint256 hero) 
     public view returns(uint8 level) {
         //base level
-        level = baseLevel(token, hero);
+        level = baseLevel(hero);
         //XP
-        uint8 XPLevel = getLevel(Stats(stats).getXP(hero));
+        uint8 XPLevel = getLevelFromXP(XPRegistry(CLinks[1]).XP(hero));
         //check which is greater
         if(XPLevel > level) level = XPLevel;
     }

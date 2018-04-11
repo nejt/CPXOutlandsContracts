@@ -3,7 +3,7 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "token",
+				"name": "player",
 				"type": "address"
 			},
 			{
@@ -11,53 +11,11 @@
 				"type": "uint256"
 			},
 			{
-				"name": "skill",
-				"type": "uint8"
-			},
-			{
-				"name": "aore",
-				"type": "uint8"
-			},
-			{
-				"name": "element",
-				"type": "bool"
+				"name": "feat",
+				"type": "uint16"
 			}
 		],
 		"name": "addFeat",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "i",
-				"type": "uint8"
-			},
-			{
-				"name": "skill",
-				"type": "uint8"
-			},
-			{
-				"name": "aore",
-				"type": "uint8"
-			},
-			{
-				"name": "element",
-				"type": "bool"
-			}
-		],
-		"name": "switchFeat",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -90,12 +48,31 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
-				"name": "token",
-				"type": "address"
+				"name": "hero",
+				"type": "uint256"
 			},
+			{
+				"name": "feat",
+				"type": "uint16"
+			}
+		],
+		"name": "hasFeat",
+		"outputs": [
+			{
+				"name": "isPresent",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
 			{
 				"name": "hero",
 				"type": "uint256"
@@ -105,7 +82,7 @@
 				"type": "uint8[]"
 			}
 		],
-		"name": "upgradeApproaches",
+		"name": "upgradeSkills",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -114,106 +91,6 @@
 	{
 		"constant": true,
 		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "heroUpgrades",
-		"outputs": [
-			{
-				"name": "approaches",
-				"type": "uint8"
-			},
-			{
-				"name": "skills",
-				"type": "uint8"
-			},
-			{
-				"name": "feats",
-				"type": "uint8"
-			},
-			{
-				"name": "intialized",
-				"type": "bool"
-			},
-			{
-				"name": "level",
-				"type": "uint8"
-			},
-			{
-				"name": "canSwitchFeat",
-				"type": "bool"
-			},
-			{
-				"name": "canSwitchSkill",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "a",
-				"type": "uint8"
-			},
-			{
-				"name": "s",
-				"type": "uint8"
-			},
-			{
-				"name": "e",
-				"type": "uint8"
-			}
-		],
-		"name": "getStats",
-		"outputs": [
-			{
-				"name": "ha",
-				"type": "uint8"
-			},
-			{
-				"name": "hs",
-				"type": "uint8"
-			},
-			{
-				"name": "hf",
-				"type": "uint8"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "token",
-				"type": "address"
-			},
 			{
 				"name": "hero",
 				"type": "uint256"
@@ -239,12 +116,244 @@
 		"type": "function"
 	},
 	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
+			{
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"name": "availableFeats",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "heroUpgrades",
+		"outputs": [
+			{
+				"name": "approaches",
+				"type": "uint8"
+			},
+			{
+				"name": "skills",
+				"type": "uint8"
+			},
+			{
+				"name": "feats",
+				"type": "uint8"
+			},
+			{
+				"name": "initialized",
+				"type": "bool"
+			},
+			{
+				"name": "level",
+				"type": "uint8"
+			},
+			{
+				"name": "canSwitchFeat",
+				"type": "bool"
+			},
+			{
+				"name": "canSwitchSkill",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "token",
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_old",
+				"type": "uint8"
+			},
+			{
+				"name": "_new",
+				"type": "uint8"
+			}
+		],
+		"name": "switchSkill",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "a",
+				"type": "uint8"
+			},
+			{
+				"name": "s",
+				"type": "uint8"
+			},
+			{
+				"name": "e",
+				"type": "uint8"
+			}
+		],
+		"name": "getStats",
+		"outputs": [
+			{
+				"name": "B",
+				"type": "uint8[3]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "player",
 				"type": "address"
 			},
+			{
+				"name": "feats",
+				"type": "uint16[]"
+			}
+		],
+		"name": "grantAvailableFeats",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "i",
+				"type": "uint8"
+			},
+			{
+				"name": "feat",
+				"type": "uint16"
+			}
+		],
+		"name": "switchFeat",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "uid",
+				"type": "uint8"
+			},
+			{
+				"name": "n",
+				"type": "uint8"
+			}
+		],
+		"name": "grantUpgrade",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "ids",
+				"type": "uint8[]"
+			}
+		],
+		"name": "upgradeApproaches",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			}
+		],
+		"name": "isInitialized",
+		"outputs": [
+			{
+				"name": "initialized",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
 			{
 				"name": "stats",
 				"type": "address"
@@ -268,59 +377,11 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "_old",
-				"type": "uint8"
-			},
-			{
-				"name": "_new",
-				"type": "uint8"
-			}
-		],
-		"name": "switchSkill",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "newOwner",
 				"type": "address"
 			}
 		],
 		"name": "transferOwnership",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "ids",
-				"type": "uint8[]"
-			}
-		],
-		"name": "upgradeSkills",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",

@@ -58,8 +58,8 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
 
 
   /* Variables in control of owner */
-  //maker contract - one contract makes all the tokens
-  address[] public Maker;
+  //cost - the initial cost for the new tokens
+  uint256[] public Cost;
   
   //profit share on sale of Item
   uint8 commissionPercent = 1;
@@ -92,6 +92,10 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   function CosmicCollectionTokens() public {
       //fallback - bank is owner - othwerwise all profits go to 0
       bank = msg.sender;
+      //initial cost for planes and heroes
+      uint256 baseCost = 2 * 1 finney;
+      Cost.push(baseCost);
+      Cost.push(baseCost);
   }
 
   // The contract owner can withdraw funds that were received this way.
@@ -152,9 +156,19 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   
   //get a count of all deeds of a type
   function countOfDeedsOfType (uint16 _type)
-  external view returns(uint256 count) {
+  public view returns(uint256 count) {
       count = deedsOfType[_type].length;
   }
+  
+  //get a cost based upon number
+  //doubles every 10
+  function currentCost (uint16 _type)
+  public view returns (uint256 cost) {
+      require(Cost[_type] > 0);
+      uint256 multi = 1 + countOfDeedsOfType(_type) / 10;
+      cost = Cost[_type] * multi;
+  }
+  
   
   //hash standard - use the token contract, type id, time created, and id
   function getHash (uint256 _deedId)
@@ -175,17 +189,20 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
 
   /* Creation Functions */
 
-  // Only the admin can create bases
-  // All Admins are "Maker Contracts" based upon types
-  function create(uint16 _type, address _owner)
-  public {
-    require(msg.sender == Maker[_type]);
+  // Create a token based upon a type - type must cost something
+  function create(uint16 _type)
+  public whenNotPaused nonReentrant payable {
+    //type must cost something or this will throw
+    uint256 _cost = currentCost(_type);
+    require(msg.value >= _cost);
+    // The bank gets their share.
+    asyncSend(bank, _cost);
     //create
     uint256 deedId = deedIds.length;
     //push to array
     deedIds.push(deedId);
     //create new token
-    super._mint(_owner, deedId);
+    super._mint(msg.sender, deedId);
     //create deed
     deeds[deedId] = CosmicItem({
       cosmicType: _type,
@@ -196,7 +213,7 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
     //track the type of the deed
     deedsOfType[_type].push(deedId);
     //log
-    emit LogCreation(deedId, _type, _owner);
+    emit LogCreation(deedId, _type, msg.sender);
   }
   
   
@@ -221,7 +238,7 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
     // commission is a percent
     uint256 profitShare = newPrice.mul(commissionPercent).div(100);
 
-    // The owner gets their share.
+    // The bank gets their share.
     asyncSend(bank, profitShare);
 
     // Reimburse previous owner their price minus the profit share
@@ -254,14 +271,14 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
     url = _url;
   }
   
-  function setMaker(address _maker) 
+  function setCost(uint256 c) 
   external onlyOwner {
-    Maker.push(_maker);
+    Cost.push(c);
   }
   
-  function setMaker(uint256 i, address _maker) 
+  function setCost(uint256 i, uint256 c) 
   external onlyOwner {
-      require(Maker[i] != address(0));
-    Maker[i] = _maker;
+    require(Cost[i] != 0);
+    Cost[i] = c;
   }
 }

@@ -24,7 +24,7 @@ contract HeroFAStats is Ownable{
         uint8 approaches;
         uint8 skills;
         uint8 feats;
-        bool intialized;
+        bool initialized;
         uint8 level;
         bool canSwitchFeat;
         bool canSwitchSkill;
@@ -39,7 +39,7 @@ contract HeroFAStats is Ownable{
     mapping (uint256 => uint8[10]) internal heroSkills;
     //feats 
     //skill * 10 + approach
-    //OR 1000 + (skill * 100 + element)
+    //OR 500 + (skill * 100 + element)
     struct Feat {
         uint16[] all;
         //internal mapping for quick lookup
@@ -48,42 +48,69 @@ contract HeroFAStats is Ownable{
     //feats
     mapping (uint256 => Feat) internal heroFeats;
     
+    //available feats for player
+    mapping (address => mapping(uint16 => uint8)) public availableFeats;
+    
+    
     function HeroFAStats() public {}
     
     /* Admin Only*/
 
     
     /* View functions */
-    function getHero(address token, uint256 hero) 
-    public view returns (uint8[6] approaches, uint8[10] skills,uint16[] feats) {
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
+    function isInitialized(uint256 hero) 
+    public view returns (bool initialized) {
+        initialized = heroUpgrades[hero].initialized;
+    }
+    
+    function getHero(uint256 hero) 
+    public view returns (uint8[6] approaches, uint8[10] skills, uint16[] feats) {
         approaches = heroApproaches[hero];
         skills = heroSkills[hero];
         feats = heroFeats[hero].all;
     }
     
+    function hasFeat(uint256 hero, uint16 feat) 
+    public view returns (bool isPresent) {
+        isPresent = heroFeats[hero].isPresent[feat];
+    }
+    
     function getStats(uint256 hero, uint8 a, uint8 s, uint8 e) 
-    public view returns (uint8 ha, uint8 hs, uint8 hf) {
-        hs = 4 + heroSkills[hero][s]*2;
-        ha = 2 + heroApproaches[hero][a];
-        hf = 0;
+    public view returns (uint8[3] B) {
+        B[0] = heroApproaches[hero][a];
+        B[1] = heroSkills[hero][s];
+        B[2] = 0;
+
         //feat id
         uint16 fa = s*10 + a;
         uint16 fe = 1000 + (s*100 + e);
         
         //check for element feat
-        if(heroFeats[hero].isPresent[fe]) hf = 6;
-        else if (heroFeats[hero].isPresent[fa]) hf = 3;
+        if(heroFeats[hero].isPresent[fe]) B[2] = 2;
+        else if (heroFeats[hero].isPresent[fa]) B[2] = 3;
     }
     
     /* Public functions */
+    function grantUpgrade(uint256 hero, uint8 uid, uint8 n) 
+    public onlyOwner {
+        if(uid == 0) heroUpgrades[hero].approaches += n;
+        else if(uid == 1) heroUpgrades[hero].skills += n;
+        else if(uid == 2) heroUpgrades[hero].feats += n;
+        else if(uid == 3) heroUpgrades[hero].canSwitchFeat = true;
+        else if(uid == 4) heroUpgrades[hero].canSwitchSkill = true;
+    }
+    
+    //grant an array of feats to an owner
+    function grantAvailableFeats(address player, uint16[] feats) 
+    public onlyOwner {
+        for(uint8 i = 0; i < feats.length; i++){
+            availableFeats[player][feats[i]]++;
+        }
+    }
     
     function initalizeHero(address token, address stats, address _level, uint256 hero) 
-    public {
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
-        require(!heroUpgrades[hero].intialized);
+    public onlyOwner {
+        require(!heroUpgrades[hero].initialized);
         //get level
         uint8 level = Levels(_level).getLevel(token,stats,hero);
         //calculate upgrades
@@ -94,10 +121,8 @@ contract HeroFAStats is Ownable{
         heroUpgrades[hero] = Upgrades(approaches,skills,feats,true,level,false,false);
     } 
     
-    function LevelUp(address token, address stats, address _level, uint256 hero)
-    public {
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
+    function LevelUp(address stats, address _level, uint256 hero)
+    public onlyOwner {
         //level stops at 20
         require(heroUpgrades[hero].level < 20);
         //require that they have the XP over the next level - level 1 starts at 0
@@ -113,19 +138,10 @@ contract HeroFAStats is Ownable{
         if(heroUpgrades[hero].level % 4 == 0) heroUpgrades[hero].approaches += 2;
     }
     
-    function upgradeSkills (address token, uint256 hero, uint8[] ids) 
-    public {
-        uint8 nupgrades = uint8(ids.length);
-        //no more than 10 at a time
-        require(nupgrades <= 10);
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
-        //check they can upgrade
-        require(heroUpgrades[hero].skills >= nupgrades);
-        //get max - skill rank must be less than 2 + level/4
-        //uint8 max = 2 + (heroUpgrades[hero].level / 4);
+    function upgradeSkills (uint256 hero, uint8[] ids) 
+    public onlyOwner {
         //loop through upgrades 
-        for(uint8 i = 0; i < nupgrades; i++) {
+        for(uint8 i = 0; i < ids.length; i++) {
             //reduce upgrade count
             heroUpgrades[hero].skills--;
             //upgrade
@@ -133,19 +149,10 @@ contract HeroFAStats is Ownable{
         }
     } 
     
-    function upgradeApproaches (address token, uint256 hero, uint8[] ids) 
-    public {
-        uint8 nupgrades = uint8(ids.length);
-        //no more than 10 at a time
-        require(nupgrades <= 10);
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
-        //check they can upgrade
-        require(heroUpgrades[hero].approaches >= nupgrades);
+    function upgradeApproaches (uint256 hero, uint8[] ids) 
+    public onlyOwner {
         //loop through upgrades 
-        for(uint8 i = 0; i < nupgrades; i++) {
-            //approach rank must be less 20 which is 12 because 0 = 8
-            //require(heroApproaches[hero][ids[i]] <= 12);
+        for(uint8 i = 0; i < ids.length; i++) {
             //reduce upgrade count
             heroUpgrades[hero].approaches--;
             //upgrade
@@ -153,45 +160,37 @@ contract HeroFAStats is Ownable{
         }
     } 
     
-    function addFeat (address token, uint256 hero, uint8 skill, uint8 aore, bool element) 
-    public {
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
-        //create feat id
-        //skill * 10 + approach
-        //OR 1000 + (skill * 100 + element)
-        uint16 id = element ? 1000 + (skill*100 + aore) : skill*10 + aore;
-        //push to hero
-        heroFeats[hero].all.push(id);
-        heroFeats[hero].isPresent[id] = true;
-    }
-    
-    function switchSkill  (address token, uint256 hero, uint8 _old, uint8 _new) 
-    public {
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
-        //require switch
-        require(heroUpgrades[hero].canSwitchSkill);
-        heroUpgrades[hero].canSwitchSkill = false;
+    function switchSkill  (uint256 hero, uint8 _old, uint8 _new) 
+    public onlyOwner {
         //decrement
         heroSkills[hero][_old]--;
         //increase
         heroSkills[hero][_new]++;
     }
     
-    function switchFeat  (address token, uint256 hero, uint8 i, uint8 skill, uint8 aore, bool element) 
-    public {
-        //must own hero
-        require(msg.sender == Token(token).ownerOf(hero));
-        //require switch
-        require(heroUpgrades[hero].canSwitchFeat);
-        heroUpgrades[hero].canSwitchFeat = false;
+    function addFeat (address player, uint256 hero, uint16 feat) 
+    public onlyOwner {
+        //reduce upgrades
+        heroUpgrades[hero].feats--;
+        //reduce available
+        availableFeats[player][feat]--;
+        //push to hero
+        heroFeats[hero].all.push(feat);
+        heroFeats[hero].isPresent[feat] = true;
+    }
+    
+    function switchFeat  (address player, uint256 hero, uint8 i, uint16 feat) 
+    public onlyOwner {
         //switch id
         uint16 switchid = heroFeats[hero].all[i];
         heroFeats[hero].isPresent[switchid] = false;
-        //new id
-        uint16 id = element ? 1000 + (skill*100 + aore) : skill*10 + aore;
-        heroFeats[hero].all[i] = id;
-        heroFeats[hero].isPresent[id] = true;
+        //increase available
+        availableFeats[player][switchid]++;
+        //reduce available
+        availableFeats[player][feat]--;
+        //push to hero
+        heroFeats[hero].all[i] = feat;
+        heroFeats[hero].isPresent[feat] = true;
     }
+    
 }

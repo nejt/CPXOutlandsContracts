@@ -3,6 +3,39 @@
 		"constant": true,
 		"inputs": [
 			{
+				"name": "hero",
+				"type": "uint256"
+			}
+		],
+		"name": "baseLevel",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "links",
+				"type": "address[]"
+			}
+		],
+		"name": "setContractLinks",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
 				"name": "",
 				"type": "uint256"
 			}
@@ -19,35 +52,26 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "XP",
-				"type": "uint256"
-			}
-		],
-		"name": "getLevel",
-		"outputs": [
-			{
-				"name": "",
+				"name": "i",
 				"type": "uint8"
+			},
+			{
+				"name": "link",
+				"type": "address"
 			}
 		],
+		"name": "setContractLinks",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"constant": true,
 		"inputs": [
-			{
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"name": "stats",
-				"type": "address"
-			},
 			{
 				"name": "hero",
 				"type": "uint256"
@@ -66,17 +90,27 @@
 	},
 	{
 		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [
 			{
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"name": "hero",
+				"name": "XP",
 				"type": "uint256"
 			}
 		],
-		"name": "baseLevel",
+		"name": "getLevelFromXP",
 		"outputs": [
 			{
 				"name": "",
@@ -86,5 +120,55 @@
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "CLinks",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
 	}
 ]
