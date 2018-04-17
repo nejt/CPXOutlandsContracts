@@ -5,20 +5,12 @@
 			{
 				"name": "hero",
 				"type": "uint256"
-			},
-			{
-				"name": "_to",
-				"type": "uint256"
-			},
-			{
-				"name": "_fromI",
-				"type": "uint256"
 			}
 		],
-		"name": "moveHero",
+		"name": "levelUp",
 		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -36,26 +28,17 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [],
-		"name": "killContract",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_planeID",
-				"type": "uint256"
+				"name": "",
+				"type": "address"
 			}
 		],
-		"name": "countOfItemsByPlane",
+		"name": "playerFeatCommit",
 		"outputs": [
 			{
-				"name": "_n",
+				"name": "",
 				"type": "uint256"
 			}
 		],
@@ -67,15 +50,23 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_planeID",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "itemsOnPlane",
+		"name": "heroUpgrades",
 		"outputs": [
 			{
-				"name": "_items",
-				"type": "uint256[]"
+				"name": "approaches",
+				"type": "uint8"
+			},
+			{
+				"name": "skills",
+				"type": "uint8"
+			},
+			{
+				"name": "feats",
+				"type": "uint8"
 			}
 		],
 		"payable": false,
@@ -92,22 +83,58 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "_planeID",
+				"name": "hero",
 				"type": "uint256"
 			},
 			{
-				"name": "_i",
-				"type": "uint256"
+				"name": "ids",
+				"type": "uint8[]"
 			}
 		],
-		"name": "itemAtIndex",
+		"name": "Upgrade",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "_old",
+				"type": "uint8"
+			},
+			{
+				"name": "_new",
+				"type": "uint8"
+			}
+		],
+		"name": "switchSkill",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "admins",
 		"outputs": [
 			{
-				"name": "_item",
-				"type": "uint256"
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -116,21 +143,43 @@
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "_itemID",
-				"type": "uint256"
-			}
-		],
-		"name": "planeOf",
+		"inputs": [],
+		"name": "costToChange",
 		"outputs": [
 			{
-				"name": "_planeID",
+				"name": "",
 				"type": "uint256"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"name": "feats",
+				"type": "uint16[]"
+			}
+		],
+		"name": "grantAvailableFeats",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "commitToDrawFeats",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -166,36 +215,75 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "initialized",
-		"outputs": [
+				"name": "cli",
+				"type": "uint8"
+			},
 			{
-				"name": "",
-				"type": "bool"
+				"name": "newOwner",
+				"type": "address"
 			}
 		],
+		"name": "transferOwnedOwnership",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "moveCost",
-		"outputs": [
+		"constant": false,
+		"inputs": [
 			{
-				"name": "",
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "feat",
+				"type": "uint16"
+			}
+		],
+		"name": "addFeat",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "uid",
+				"type": "uint8"
+			},
+			{
+				"name": "n",
+				"type": "uint8"
+			}
+		],
+		"name": "grantUpgrade",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
 				"type": "uint256"
 			}
 		],
+		"name": "initalizeHero",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -213,28 +301,9 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_move",
-				"type": "uint256"
-			}
-		],
-		"name": "setConstants",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "cooldown",
+		"inputs": [],
+		"name": "costToDrawFeats",
 		"outputs": [
 			{
 				"name": "",
@@ -243,6 +312,20 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "element",
+				"type": "bool"
+			}
+		],
+		"name": "drawFeats",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -268,6 +351,20 @@
 		"constant": false,
 		"inputs": [
 			{
+				"name": "c",
+				"type": "uint256[3]"
+			}
+		],
+		"name": "setConstants",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
 				"name": "newOwner",
 				"type": "address"
 			}
@@ -282,18 +379,40 @@
 		"constant": false,
 		"inputs": [
 			{
+				"name": "cli",
+				"type": "uint8"
+			},
+			{
+				"name": "links",
+				"type": "address[]"
+			}
+		],
+		"name": "setOwnedContractLinks",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
 				"name": "hero",
 				"type": "uint256"
 			},
 			{
-				"name": "to",
-				"type": "uint256"
+				"name": "i",
+				"type": "uint8"
+			},
+			{
+				"name": "feat",
+				"type": "uint16"
 			}
 		],
-		"name": "setInitialLocation",
+		"name": "switchFeat",
 		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -301,6 +420,11 @@
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "fallback"
 	},
 	{
 		"anonymous": false,
