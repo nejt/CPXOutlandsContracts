@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 import "./SafeMath.sol";
 import "./Pausable.sol";
-import "./Distributes.sol";
+import "./PullToBank.sol";
 import "./ReentrancyGuard.sol";
 import "./ERC721DeedNoBurn.sol";
 import "./ERC721Metadata.sol";
