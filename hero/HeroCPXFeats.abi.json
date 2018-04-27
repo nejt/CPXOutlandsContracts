@@ -3,28 +3,6 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "_to",
-				"type": "uint256"
-			},
-			{
-				"name": "_fromI",
-				"type": "uint256"
-			}
-		],
-		"name": "moveHero",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "links",
 				"type": "address[]"
 			}
@@ -36,27 +14,22 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [],
-		"name": "killContract",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_planeID",
-				"type": "uint256"
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"name": "feat",
+				"type": "uint16"
 			}
 		],
-		"name": "countOfItemsByPlane",
+		"name": "countOfFeatsAvailable",
 		"outputs": [
 			{
-				"name": "_n",
-				"type": "uint256"
+				"name": "count",
+				"type": "uint8"
 			}
 		],
 		"payable": false,
@@ -67,15 +40,15 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_planeID",
-				"type": "uint256"
+				"name": "",
+				"type": "address"
 			}
 		],
-		"name": "itemsOnPlane",
+		"name": "playerFeatCommit",
 		"outputs": [
 			{
-				"name": "_items",
-				"type": "uint256[]"
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -95,38 +68,15 @@
 		"constant": true,
 		"inputs": [
 			{
-				"name": "_planeID",
-				"type": "uint256"
-			},
-			{
-				"name": "_i",
-				"type": "uint256"
+				"name": "",
+				"type": "address"
 			}
 		],
-		"name": "itemAtIndex",
+		"name": "admins",
 		"outputs": [
 			{
-				"name": "_item",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_itemID",
-				"type": "uint256"
-			}
-		],
-		"name": "planeOf",
-		"outputs": [
-			{
-				"name": "_planeID",
-				"type": "uint256"
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -137,7 +87,48 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "cost",
+				"name": "_admin",
+				"type": "address"
+			},
+			{
+				"name": "_isAdmin",
+				"type": "bool"
+			}
+		],
+		"name": "setAdmin",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"name": "feats",
+				"type": "uint16[]"
+			}
+		],
+		"name": "grantAvailableFeats",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "c",
 				"type": "uint256[2]"
 			}
 		],
@@ -145,6 +136,15 @@
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "commitToDrawFeats",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -163,17 +163,12 @@
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "initialized",
+		"inputs": [],
+		"name": "costToDrawFeats",
 		"outputs": [
 			{
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -181,17 +176,21 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "getCost",
-		"outputs": [
+		"constant": false,
+		"inputs": [
 			{
-				"name": "cost",
-				"type": "uint256[2]"
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"name": "feats",
+				"type": "uint16[]"
 			}
 		],
+		"name": "reduceFeats",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -229,18 +228,14 @@
 	},
 	{
 		"constant": false,
-		"inputs": [
+		"inputs": [],
+		"name": "drawFeats",
+		"outputs": [
 			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "to",
-				"type": "uint256"
+				"name": "given",
+				"type": "uint16[]"
 			}
 		],
-		"name": "setInitialLocation",
-		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -250,6 +245,28 @@
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "fallback"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "feats",
+				"type": "uint16[]"
+			}
+		],
+		"name": "FeatsGiven",
+		"type": "event"
 	},
 	{
 		"anonymous": false,

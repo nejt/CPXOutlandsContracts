@@ -1,11 +1,17 @@
 pragma solidity ^0.4.18;
 
-import "./Ownable.sol";
+import "./Administered.sol";
 
-contract CommitReveal is Ownable {
-    function CommitReveal() public {}
+contract CommitReveal is Administered {
+    constructor() public {}
     
     bytes32[] public hash;
+    
+    function setAdmin(address _admin, bool _isAdmin) 
+    public onlyAdmin returns (bool success) {
+        admins[_admin] = _isAdmin;
+        return true;
+    }
     
     function hashIndex ()
     public view returns (uint256 i) {
@@ -13,7 +19,7 @@ contract CommitReveal is Ownable {
     }
 
     function newHash (string random) 
-    public onlyOwner {
+    public onlyAdmin {
         hash.push(keccak256(owner,hash.length,now,random));
     }
 }

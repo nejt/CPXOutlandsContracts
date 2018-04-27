@@ -10,7 +10,7 @@ contract XPRegistry is Administered, ContractLinked{
     
     constructor() public {
         // Links - 0 CXP
-        CLinks = [0x359CDf8A18aF8f91AB488eda888C33c7f5a53B48];
+        CLinks = [0xFD90bf0c7758F98269d59Dd908771f874C9A17f6];
     }
     
     function setAdmin(address _admin, bool _isAdmin) 

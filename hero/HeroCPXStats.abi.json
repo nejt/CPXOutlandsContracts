@@ -17,19 +17,11 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "player",
-				"type": "address"
-			},
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "feat",
-				"type": "uint16"
+				"name": "links",
+				"type": "address[]"
 			}
 		],
-		"name": "addFeat",
+		"name": "setContractLinks",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -50,76 +42,8 @@
 		"name": "hasFeat",
 		"outputs": [
 			{
-				"name": "isPresent",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "hero",
-				"type": "uint256"
-			}
-		],
-		"name": "getHero",
-		"outputs": [
-			{
-				"name": "approaches",
-				"type": "uint8[6]"
-			},
-			{
-				"name": "skills",
-				"type": "uint8[10]"
-			},
-			{
-				"name": "feats",
-				"type": "uint16[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "level",
+				"name": "value",
 				"type": "uint8"
-			}
-		],
-		"name": "initalizeHero",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "stats",
-				"type": "uint8[3]"
-			}
-		],
-		"name": "getBonus",
-		"outputs": [
-			{
-				"name": "B",
-				"type": "uint8[4]"
 			}
 		],
 		"payable": false,
@@ -138,10 +62,64 @@
 				"type": "uint8[]"
 			}
 		],
-		"name": "Upgrade",
+		"name": "upgradeSkills",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			}
+		],
+		"name": "getHero",
+		"outputs": [
+			{
+				"name": "level",
+				"type": "uint8"
+			},
+			{
+				"name": "skills",
+				"type": "uint8[12]"
+			},
+			{
+				"name": "feats",
+				"type": "uint16[]"
+			},
+			{
+				"name": "upgrades",
+				"type": "uint16[2]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "stats",
+				"type": "uint8[3]"
+			}
+		],
+		"name": "getBonus",
+		"outputs": [
+			{
+				"name": "B",
+				"type": "uint8[3]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -167,78 +145,74 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
-				"name": "player",
+				"name": "",
 				"type": "address"
-			},
-			{
-				"name": "feats",
-				"type": "uint16[]"
 			}
 		],
-		"name": "grantAvailableFeats",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "player",
-				"type": "address"
-			},
-			{
-				"name": "hero",
-				"type": "uint256"
-			},
-			{
-				"name": "i",
-				"type": "uint8"
-			},
-			{
-				"name": "feat",
-				"type": "uint16"
-			}
-		],
-		"name": "switchFeat",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "player",
-				"type": "address"
-			},
-			{
-				"name": "hash",
-				"type": "bytes32"
-			},
-			{
-				"name": "element",
-				"type": "bool"
-			},
-			{
-				"name": "maxe",
-				"type": "uint8"
-			}
-		],
-		"name": "drawFeats",
+		"name": "admins",
 		"outputs": [
 			{
-				"name": "given",
-				"type": "uint16[]"
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "c",
+				"type": "uint256[]"
+			}
+		],
+		"name": "setConstants",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "XPRequired",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_admin",
+				"type": "address"
 			},
 			{
-				"name": "_hash",
-				"type": "bytes32"
+				"name": "_isAdmin",
+				"type": "bool"
+			}
+		],
+		"name": "setAdmin",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
 			}
 		],
 		"payable": false,
@@ -279,22 +253,21 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "",
+				"name": "hero",
 				"type": "uint256"
-			}
-		],
-		"name": "initialized",
-		"outputs": [
+			},
 			{
-				"name": "",
-				"type": "bool"
+				"name": "feat",
+				"type": "uint16"
 			}
 		],
+		"name": "addFeat",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -317,22 +290,40 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "uid",
+				"type": "uint8"
+			},
+			{
+				"name": "n",
+				"type": "uint8"
+			}
+		],
+		"name": "grantUpgrade",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
-				"name": "player",
-				"type": "address"
-			},
-			{
-				"name": "feat",
-				"type": "uint16"
+				"name": "",
+				"type": "uint256"
 			}
 		],
-		"name": "getCountOfAvailableFeats",
+		"name": "CLinks",
 		"outputs": [
 			{
-				"name": "count",
-				"type": "uint8"
+				"name": "",
+				"type": "address"
 			}
 		],
 		"payable": false,
@@ -354,27 +345,32 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hero",
+				"type": "uint256"
+			},
+			{
+				"name": "i",
+				"type": "uint8"
+			},
+			{
+				"name": "feat",
+				"type": "uint16"
+			}
+		],
+		"name": "switchFeat",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "player",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "feats",
-				"type": "uint16[]"
-			}
-		],
-		"name": "FeatsGiven",
-		"type": "event"
 	},
 	{
 		"anonymous": false,

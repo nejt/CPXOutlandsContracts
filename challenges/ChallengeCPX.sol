@@ -32,8 +32,8 @@ contract ChallengeCPX is PaysBank {
     uint256 public createChallengeCost = 2 * 1 finney;
     
     constructor() public {
-        //Links - 0 Bank, 1 CC Token
-        CLinks = [0x5EF476161F3769b5099d404e421Ce07604555D96,0xc5340D8d98592F995d288945868F3563c0f0bA7A];
+        //Links - 0 Bank, 1 Colectable
+        CLinks = [0x16e39D98A3f25B39eBdA681ECaE94418E1d20De2,0x572403E42F7d787f3EA38eeCCCe7699c02e95f55];
     }
     
     /* Views */
@@ -58,6 +58,11 @@ contract ChallengeCPX is PaysBank {
         plane = challenges[id].plane;
     }
     
+    function getDC (uint256 id)
+    public view returns(uint8 DC) {
+        DC = challenges[id].DC;
+    }
+    
     function getSkills (uint256 id)
     public view returns(uint8[] skills) {
         skills = challenges[id].skills;
@@ -74,9 +79,17 @@ contract ChallengeCPX is PaysBank {
         key = challenges[id].key;
     }
     
+    function getResolveData (uint256 id) 
+    public view returns(bool finalized, uint8 DC, uint8[] skills, uint8[] elements, bytes32 key) {
+        finalized = challenges[id].finalized;
+        DC = challenges[id].DC;
+        skills = challenges[id].skills;
+        elements = challenges[id].elements;
+        key = challenges[id].key;
+    }
     
     /*Admin */
-    function setCost (uint256 cost) 
+    function setConstants (uint256 cost) 
     public {
         require(AdminContract(owner).admins(msg.sender));
         if(cost != 0) createChallengeCost = cost;
@@ -84,13 +97,13 @@ contract ChallengeCPX is PaysBank {
     
     
     /* Functions to be called by admin contract */
-    //Links - 0 Bank, 1 CC Token
+    //Links - 0 Bank, 1 Collectable
     
     //Skill[2] - primary and total number, plane id - must be the owner, difficulty - only if admin 
     function createChallenge (uint8[2] skills, uint256 plane, uint8 DC) 
     public payable {
         //validate skill and plane
-        require(skills[0] < 10 && skills[1] < 22 && CosmicCollectionTokens(CLinks[1]).typeOf(plane) == 0);
+        require(skills[0] < 12 && skills[1] < 22 && CosmicCollectionTokens(CLinks[1]).typeOf(plane) == 0);
         //max of 5 challenges
         require(countOfChallengesOnAPlane[plane]+1 < 6);
         
@@ -131,7 +144,7 @@ contract ChallengeCPX is PaysBank {
     function setKey(uint256 id, uint8[] skills, uint8[] elements, string _key)
     public {
         //require admin 
-        //Created by player - they get benefit but set by admin for control of skills and elements
+        //Created by player - they get benefit, but set by admin for control of skills and elements
         require(AdminContract(owner).admins(msg.sender));
         
         //check number of skills

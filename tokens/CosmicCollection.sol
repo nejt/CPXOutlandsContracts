@@ -125,6 +125,15 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
 
 
     /* Data Views */
+    
+    function pagenate (uint16 what, uint page)
+    internal view returns (uint256[] data) {
+        data = new uint256[](100);
+        
+        for(uint8 i = 0; i < 100; i++) {
+            data[i] = deedsOfType[what][(100*page)+i];
+        }
+    }
 
   /* Enable listing of all deeds (alternative to ERC721Enumerable to avoid having to work with arrays). */
   function ids()
@@ -149,9 +158,11 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   }
   
   //get a list of all deeds of a type
-  function allDeedsOfType (uint16 _type)
+  //pagenated so that only 100 is returned at a time
+  function allDeedsOfType (uint16 _type, uint page)
   external view returns(uint256[] allDeeds) {
-      allDeeds = deedsOfType[_type];
+      if(deedsOfType[_type].length < 100) allDeeds = deedsOfType[_type];
+      else allDeeds = pagenate(_type, page);
   }
   
   //get a count of all deeds of a type
@@ -165,7 +176,7 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   function currentCost (uint16 _type)
   public view returns (uint256 cost) {
       require(Cost[_type] > 0);
-      uint256 multi = 1 + countOfDeedsOfType(_type) / 10;
+      uint256 multi = 1 + countOfDeedsOfType(_type) / 50;
       cost = Cost[_type] * multi;
   }
   
@@ -175,6 +186,19 @@ contract CosmicCollectionTokens is ERC721DeedNoBurn, Pausable, PullToBank, Reent
   external view returns(bytes32 hash) {
       uint16 _type = deeds[_deedId].cosmicType;
       hash = keccak256(address(this), _type, deeds[_deedId].created, _deedId);
+  }
+  
+  function getHashArray (uint256[] _ids) 
+  external view returns (bytes32[] hash){
+      //no overload
+      require(_ids.length <= 20);
+      hash = new bytes32[](_ids.length);
+      
+      uint16 deedType;
+      for(uint8 i = 0; i < _ids.length ; i++) {
+          deedType =  deeds[_ids[i]].cosmicType;
+          hash[i] = keccak256(address(this), deedType, deeds[_ids[i]].created,_ids[i]);
+      }
   }
 
   function deed(uint256 _deedId)

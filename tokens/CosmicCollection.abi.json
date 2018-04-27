@@ -232,6 +232,29 @@
 	},
 	{
 		"constant": true,
+		"inputs": [
+			{
+				"name": "_type",
+				"type": "uint16"
+			},
+			{
+				"name": "page",
+				"type": "uint256"
+			}
+		],
+		"name": "allDeedsOfType",
+		"outputs": [
+			{
+				"name": "allDeeds",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [],
 		"name": "paused",
 		"outputs": [
@@ -347,6 +370,25 @@
 		"type": "function"
 	},
 	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_ids",
+				"type": "uint256[]"
+			}
+		],
+		"name": "getHashArray",
+		"outputs": [
+			{
+				"name": "hash",
+				"type": "bytes32[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -404,25 +446,6 @@
 			{
 				"name": "",
 				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_type",
-				"type": "uint16"
-			}
-		],
-		"name": "allDeedsOfType",
-		"outputs": [
-			{
-				"name": "allDeeds",
-				"type": "uint256[]"
 			}
 		],
 		"payable": false,

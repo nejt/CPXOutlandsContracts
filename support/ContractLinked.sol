@@ -16,10 +16,6 @@ contract ContractLinked is Ownable {
         CLinks = links;
     }
     
-    function setContractLinks(uint8 i, address link)
-    public onlyOwner{
-        CLinks[i] = link;
-    }
 }
 
 contract OwnsLinkedContracts is ContractLinked {

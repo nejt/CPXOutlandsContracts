@@ -9,7 +9,7 @@ contract TracksPlaneLocation {
     // Mapping from deed ID to plane
     mapping (uint256 => uint256) internal itemPlane;
     
-    function TracksPlaneLocation() public {}
+    constructor() public {}
     
     
     /* Information Functions */
@@ -29,7 +29,7 @@ contract TracksPlaneLocation {
     }
     
     function itemAtIndex (uint256 _planeID, uint256 _i)
-    external view returns (uint256 _item) {
+    public view returns (uint256 _item) {
         _item = planeItems[_planeID][_i];
     }
     

@@ -3,24 +3,6 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"name": "_xp",
-				"type": "uint256"
-			}
-		],
-		"name": "transferXP",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "links",
 				"type": "address[]"
 			}
@@ -32,41 +14,26 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "admins",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_admin",
-				"type": "address"
-			},
-			{
-				"name": "_isAdmin",
-				"type": "bool"
+				"name": "id",
+				"type": "uint256"
 			}
 		],
-		"name": "setAdmin",
+		"name": "resolve",
 		"outputs": [
 			{
-				"name": "success",
-				"type": "bool"
+				"name": "roll",
+				"type": "bytes32"
+			},
+			{
+				"name": "results",
+				"type": "uint8[]"
+			},
+			{
+				"name": "_rewards",
+				"type": "uint256[2]"
 			}
 		],
 		"payable": false,
@@ -88,40 +55,40 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"constant": false,
 		"inputs": [
 			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "XP",
-		"outputs": [
+				"name": "i",
+				"type": "uint8"
+			},
 			{
-				"name": "",
-				"type": "uint256"
+				"name": "c",
+				"type": "uint256[25]"
 			}
 		],
+		"name": "setConstants",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
 				"name": "id",
 				"type": "uint256"
-			},
-			{
-				"name": "_xp",
-				"type": "uint256"
 			}
 		],
-		"name": "giveXP",
-		"outputs": [],
+		"name": "getRewards",
+		"outputs": [
+			{
+				"name": "baseReward",
+				"type": "uint256[2]"
+			}
+		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -162,6 +129,43 @@
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "challenge",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "roll",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "resolved",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"name": "result",
+				"type": "uint8[]"
+			},
+			{
+				"indexed": false,
+				"name": "rewards",
+				"type": "uint256[2]"
+			}
+		],
+		"name": "Result",
+		"type": "event"
 	},
 	{
 		"anonymous": false,

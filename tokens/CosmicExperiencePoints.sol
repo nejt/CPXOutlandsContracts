@@ -9,7 +9,7 @@ import "./Ownable.sol";
 // CXP tokens are mintable by the owner until the `disableMinting()` function
 // is executed. Tokens can be burnt by sending them to address 0x0
 //
-// Deployed to : (Ropsten) 
+// Deployed to : 
 // Symbol      : CXP
 // Name        : Cosmic Experience Points
 // Total supply: mintable
